@@ -1,9 +1,23 @@
-import Image from "next/image";
+import { signIn } from "@/auth";
+import { getCurrentUser } from "@/lib/getCurrentUser";
 
-export default function Home() {
+export default async function Home() {
+  const user = await getCurrentUser();
+  if (!user) {
+    return (
+      <form
+        action={async () => {
+          "use server";
+          await signIn("google");
+        }}
+      >
+        <button type="submit">Signin with Google</button>
+      </form>
+    );
+  }
   return (
     <>
-      <h1 className="text-4xl text-teal-500">Hello World</h1>
+      <h1 className="text-4xl text-teal-500">{user.id}</h1>
     </>
   );
 }

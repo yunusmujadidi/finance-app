@@ -1,10 +1,10 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./lib/prisma";
 import bcrypt from "bcryptjs";
+import Google from "next-auth/providers/google";
+import GitHub from "next-auth/providers/github";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -45,14 +45,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return user;
       },
     }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    }),
+    Google,
+    GitHub,
   ],
   session: {
     strategy: "jwt",
@@ -90,5 +84,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return true; // Allow sign in for other cases
     },
+  },
+  pages: {
+    signIn: "/auth/signin",
   },
 });
