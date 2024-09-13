@@ -7,6 +7,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import { AccountForm } from "./account-form";
 
 export const NewAccountSheet = () => {
   const { isOpen, onClose } = UseNewAccount();
@@ -19,6 +20,7 @@ export const NewAccountSheet = () => {
             Create a new account to track your transactions
           </SheetDescription>
         </SheetHeader>
+        <AccountForm onSubmit={() => {}} disabled={false} />
       </SheetContent>
     </Sheet>
   );
