@@ -48,11 +48,11 @@ export const UserMenu = ({ currentUser }: { currentUser: User | null }) => {
         <DropdownMenuContent className="w-40 mx-5">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => router.push("/signin")}>
+          <DropdownMenuItem onClick={() => router.push("/sign-in")}>
             <LogIn className="mr-2 size-4" />
             <span>Log In</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push("/signup")}>
+          <DropdownMenuItem onClick={() => router.push("/sign-up")}>
             <UserPlus className="mr-2 size-4" />
             <span>Sign Up</span>
           </DropdownMenuItem>

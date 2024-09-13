@@ -1,5 +1,5 @@
-import SignInClient from "@/app/signin/signinclient";
-import { getCurrentUser } from "@/lib/getCurrentUser";
+import SignInClient from "@/app/sign-in/signinclient";
+import { getCurrentUser } from "@/lib/get-current-user";
 import SignOutButton from "./sign-out";
 
 const SignInPage = async () => {

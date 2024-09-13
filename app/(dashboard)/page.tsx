@@ -1,9 +1,16 @@
-import { getCurrentUser } from "@/lib/getCurrentUser";
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { UseNewAccount } from "@/lib/hooks/use-new-account";
 import React from "react";
 
-const Dashboard = async () => {
-  const currentUser = await getCurrentUser();
-  return <div>{currentUser?.name ? currentUser?.name : "no currentuser"}</div>;
+const Dashboard = () => {
+  const { onOpen } = UseNewAccount();
+  return (
+    <div>
+      <Button onClick={onOpen}>Add an account</Button>
+    </div>
+  );
 };
 
 export default Dashboard;

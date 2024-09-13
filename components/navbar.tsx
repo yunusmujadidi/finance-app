@@ -1,7 +1,7 @@
 import { Logo } from "@/components/logo";
 import { Navigation } from "@/components/navigation";
 import { UserMenu } from "./user-menu";
-import { getCurrentUser } from "@/lib/getCurrentUser";
+import { getCurrentUser } from "@/lib/get-current-user";
 import { NavbarText } from "./navbar-text";
 
 export const Navbar = async () => {
