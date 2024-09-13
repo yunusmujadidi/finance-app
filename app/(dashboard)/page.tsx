@@ -1,12 +1,9 @@
+import { getCurrentUser } from "@/lib/getCurrentUser";
 import React from "react";
 
-const Dashboard = () => {
-  return (
-    <div>
-      <p>authenthicated route</p>
-      Dashboard
-    </div>
-  );
+const Dashboard = async () => {
+  const currentUser = await getCurrentUser();
+  return <div>{currentUser?.name ? currentUser?.name : "no currentuser"}</div>;
 };
 
 export default Dashboard;
