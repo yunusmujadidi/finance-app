@@ -5,12 +5,12 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "../ui/sheet";
-import { AccountForm } from "./account-form";
+import { AccountForm, FormValues } from "./account-form";
 
 export const NewAccountSheet = () => {
   const { isOpen, onClose } = UseNewAccount();
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="space-y-4">
@@ -20,7 +20,7 @@ export const NewAccountSheet = () => {
             Create a new account to track your transactions
           </SheetDescription>
         </SheetHeader>
-        <AccountForm onSubmit={() => {}} disabled={false} />
+        <AccountForm disabled={false} />
       </SheetContent>
     </Sheet>
   );

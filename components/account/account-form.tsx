@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Trash } from "lucide-react";
+import { Loader2, Trash } from "lucide-react";
+import { createAccount } from "@/lib/actions/account-actions";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -13,12 +22,11 @@ const formSchema = z.object({
   }),
 });
 
-type FormValues = z.input<typeof formSchema>;
+export type FormValues = z.input<typeof formSchema>;
 
 interface AccountFormProps {
   id?: string;
   defaultValues?: FormValues;
-  onSubmit: (values: FormValues) => void;
   onDelete?: () => void;
   disabled: boolean;
 }
@@ -27,27 +35,38 @@ export const AccountForm = ({
   id,
   defaultValues,
   onDelete,
-  onSubmit,
   disabled,
 }: AccountFormProps) => {
+  const [loading, setLoading] = useState(false);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
   });
 
-  const handleSubmit = (values: FormValues) => {
-    console.log({ values });
+  const onSubmit = async (values: FormValues) => {
+    setLoading(true);
+    const result = await createAccount({
+      name: values.name,
+    });
+    setLoading(false);
+    if (result.success) {
+      toast.success("Account created successfully");
+      form.reset({
+        name: "",
+      });
+    } else {
+      toast.error(result.error);
+    }
+    return console.log(result);
   };
+
   const handleDelete = () => {
     onDelete?.();
   };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-4 pt-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
         <FormField
           name="name"
           control={form.control}
@@ -56,22 +75,24 @@ export const AccountForm = ({
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input
-                  disabled={disabled}
+                  disabled={disabled || loading}
                   placeholder="e.g. Cash, Bank, Credit Card"
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
-        <Button className="w-full" disabled={disabled}>
+        <Button className="w-full" disabled={disabled || loading}>
+          {loading && <Loader2 className="size-4 animate-spin mr-2" />}{" "}
           {id ? "Save changes" : "Create account"}
         </Button>
         {!!id && (
           <Button
             className="w-full"
             type="button"
-            disabled={disabled}
+            disabled={disabled || loading}
             onClick={handleDelete}
             variant="outline"
           >
