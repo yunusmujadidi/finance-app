@@ -17,12 +17,24 @@ model User {
   accounts         Account[]
   sessions         Session[]
   FinancialAccount FinancialAccount[]
+  Categories       Categories[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model FinancialAccount {
+  id     String @id @default(cuid())
+  userId String
+  name   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Categories {
   id     String @id @default(cuid())
   userId String
   name   String
