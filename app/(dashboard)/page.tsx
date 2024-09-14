@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { UseNewAccount } from "@/lib/hooks/use-new-account";
 import React from "react";

@@ -1,5 +1,6 @@
 "use server";
 
+import { FinancialAccount } from "@prisma/client";
 import { prisma } from "../prisma";
 import { getCurrentUser } from "./get-current-user";
 
@@ -67,5 +68,74 @@ export const bulkDeleteAccounts = async (ids: string[]) => {
   } catch (error) {
     console.error("Failed to delete accounts:", error);
     return { success: false, error: "Failed to delete accounts" };
+  }
+};
+
+export const updateAccount = async (values: Partial<FinancialAccount>) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    throw new Error("Unauthorized");
+  }
+
+  try {
+    const result = await prisma.financialAccount.update({
+      where: {
+        id: values.id,
+        userId: currentUser.id,
+      },
+      data: {
+        name: values.name,
+      },
+    });
+
+    return { success: true, updatedData: result.name };
+  } catch (error) {
+    console.error("Failed to update account", error);
+    return { success: false, error: "Failed to update account" };
+  }
+};
+
+export const deleteAccount = async ({ id }: { id: string }) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    throw new Error("Unauthorized");
+  }
+
+  try {
+    const result = await prisma.financialAccount.delete({
+      where: {
+        id: id as string,
+        userId: currentUser.id,
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete account", error);
+    return { success: false, error: "Something went wrong" };
+  }
+};
+
+export const getAccountById = async ({ id }: { id: string }) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    throw new Error("Unauthorized");
+  }
+
+  try {
+    const result = await prisma.financialAccount.findUnique({
+      where: {
+        id: id,
+        userId: currentUser.id,
+      },
+    });
+
+    if (!result) {
+      return { success: false, error: "Account not found" };
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Failed to fetch account", error);
+    return { success: false, error: "Failed to fetch account" };
   }
 };

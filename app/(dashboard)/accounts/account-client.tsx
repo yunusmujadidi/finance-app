@@ -8,15 +8,15 @@ import { UseNewAccount } from "@/lib/hooks/use-new-account";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
 import { FinancialAccount } from "@prisma/client";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { bulkDeleteAccounts } from "@/lib/actions/account-actions";
 import { useRouter } from "next/navigation";
 
 const AccountClient = ({ data }: { data: FinancialAccount[] }) => {
-  const { onOpen } = UseNewAccount();
   const [isPending, startTransition] = useTransition();
+  const { onOpen } = UseNewAccount();
 
   const router = useRouter();
 
@@ -62,6 +62,7 @@ const AccountClient = ({ data }: { data: FinancialAccount[] }) => {
         </CardHeader>
         <CardContent>
           <DataTable
+            onUpdate={() => {}}
             onDelete={handleBulkDelete}
             filterKey="name"
             columns={columns}

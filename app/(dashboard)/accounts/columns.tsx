@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FinancialAccount } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
+import { ActionsTable } from "./actions-table";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -60,5 +61,9 @@ export const columns: ColumnDef<FinancialAccount>[] = [
         </Button>
       );
     },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <ActionsTable id={row.original.id} />,
   },
 ];

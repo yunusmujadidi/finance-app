@@ -15,7 +15,6 @@ import { Button } from "../ui/button";
 import { Loader2, Trash } from "lucide-react";
 
 import { useRouter } from "next/navigation";
-import { UseNewAccount } from "@/lib/hooks/use-new-account";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -69,6 +68,7 @@ export const AccountForm = ({
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input
+                  defaultValue={defaultValues?.name}
                   disabled={disabled || loading}
                   placeholder="e.g. Cash, Bank, Credit Card"
                   {...field}

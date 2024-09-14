@@ -36,6 +36,7 @@ interface DataTableProps<TData extends { id: string }, TValue> {
   onDelete: (rows: string[]) => void;
   disabled?: boolean;
   resetSelection?: boolean;
+  onUpdate: (id: string) => void
 }
 
 export function DataTable<TData extends { id: string }, TValue>({
@@ -44,6 +45,7 @@ export function DataTable<TData extends { id: string }, TValue>({
   filterKey,
   onDelete,
   disabled,
+  onUpdate,
 }: DataTableProps<TData, TValue>) {
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
