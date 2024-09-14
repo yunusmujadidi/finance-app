@@ -13,8 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Loader2, Trash } from "lucide-react";
-import { createAccount } from "@/lib/actions/account-actions";
-import { toast } from "sonner";
+
 import { useRouter } from "next/navigation";
 import { UseNewAccount } from "@/lib/hooks/use-new-account";
 
@@ -31,43 +30,32 @@ interface AccountFormProps {
   defaultValues?: FormValues;
   onDelete?: () => void;
   disabled: boolean;
+  onSubmit: (values: FormValues) => Promise<void>;
 }
 
 export const AccountForm = ({
   id,
   defaultValues,
   onDelete,
+  onSubmit,
   disabled,
 }: AccountFormProps) => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
-  const { onClose } = UseNewAccount();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
   });
 
-  const onSubmit = async (values: FormValues) => {
-    setLoading(true);
-    const result = await createAccount({
-      name: values.name,
-    });
-    setLoading(false);
-    if (result.success) {
-      toast.success("Account created successfully");
-      form.reset({
-        name: "",
-      });
-      router.refresh();
-      onClose();
-    } else {
-      toast.error(result.error);
-    }
-  };
-
   const handleDelete = () => {
+    setLoading(true);
     onDelete?.();
+    form.reset({
+      name: "",
+    });
+    router.refresh();
+    setLoading(false);
   };
 
   return (
