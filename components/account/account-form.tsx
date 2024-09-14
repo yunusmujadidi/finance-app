@@ -7,11 +7,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../components/ui/form";
+} from "../ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../../components/ui/input";
-import { Button } from "../../components/ui/button";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import { Loader2, Trash } from "lucide-react";
 import { createAccount } from "@/lib/actions/account-actions";
 import { toast } from "sonner";
