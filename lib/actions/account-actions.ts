@@ -49,3 +49,23 @@ export const getAccount = async () => {
     throw new Error("Failed to fetch accounts");
   }
 };
+
+export const bulkDeleteAccounts = async (ids: string[]) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    throw new Error("Unauthorized");
+  }
+  try {
+    const result = await prisma.financialAccount.deleteMany({
+      where: {
+        id: { in: ids },
+        userId: currentUser.id,
+      },
+    });
+
+    return { success: true, deletedCount: result.count };
+  } catch (error) {
+    console.error("Failed to delete accounts:", error);
+    return { success: false, error: "Failed to delete accounts" };
+  }
+};

@@ -28,23 +28,24 @@ import { Button } from "./ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash } from "lucide-react";
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends { id: string }, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filterKey: string;
-  onDelete: (rows: Row<TData>[]) => void;
+  onDelete: (rows: string[]) => void;
   disabled?: boolean;
+  resetSelection?: boolean;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends { id: string }, TValue>({
   columns,
   data,
   filterKey,
   onDelete,
   disabled,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -67,6 +68,12 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const handleDelete = () => {
+    const selectedRows = table.getSelectedRowModel().rows;
+    const selectedIds = selectedRows.map((row) => row.original.id);
+    onDelete(selectedIds);
+  };
+
   return (
     <div>
       <div className="flex items-center py-4">
@@ -83,6 +90,11 @@ export function DataTable<TData, TValue>({
             variant="outline"
             size="sm"
             className="ml-auto font-normal text-xs"
+            disabled={disabled}
+            onClick={() => {
+              handleDelete();
+              table.resetRowSelection();
+            }}
           >
             <Trash className="size-4 mr-2" />
             Delete ({table.getFilteredSelectedRowModel().rows.length})

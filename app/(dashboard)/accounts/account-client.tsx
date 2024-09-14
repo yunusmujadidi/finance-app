@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,41 +8,48 @@ import { UseNewAccount } from "@/lib/hooks/use-new-account";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
 import { FinancialAccount } from "@prisma/client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
+import { bulkDeleteAccounts } from "@/lib/actions/account-actions";
+import { useRouter } from "next/navigation";
 
 const AccountClient = ({ data }: { data: FinancialAccount[] }) => {
   const { onOpen } = UseNewAccount();
-  const [loading, isLoading] = useState();
+  const [isPending, startTransition] = useTransition();
 
-  const TableSkeleton = () => (
-    <div className="space-y-4">
-      <div className="flex items-center space-x-4">
-        <Skeleton className="h-10 w-[250px]" />
-        <Skeleton className="h-10 w-[100px] ml-auto" />
+  const router = useRouter();
+
+  const handleBulkDelete = async (selectedIds: string[]) => {
+    startTransition(async () => {
+      try {
+        const result = await bulkDeleteAccounts(selectedIds);
+
+        toast.success(`Successfully deleted ${result.deletedCount} accounts`);
+        router.refresh();
+      } catch (error) {
+        toast.error("Failed to delete accounts");
+        console.error("Bulk delete error:", error);
+      }
+    });
+  };
+
+  if (!data) {
+    return (
+      <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
+        <Card className="border-none drop-shadow-sm">
+          <CardHeader className="gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+            <Skeleton className="h-8 w-48" />
+          </CardHeader>
+          <CardContent>
+            <div className="h-[500px] w-full flex items-center justify-center">
+              <Loader2 className="size-6 text-slate-300 animate-spin" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
-      <div className="border rounded-lg">
-        <div className="border-b">
-          <div className="flex p-4">
-            <Skeleton className="h-6 w-6 rounded-md" />
-            <Skeleton className="h-6 w-1/4 ml-4" />
-            <Skeleton className="h-6 w-1/4 ml-4" />
-          </div>
-        </div>
-        {[...Array(5)].map((_, index) => (
-          <div key={index} className="flex items-center p-4">
-            <Skeleton className="h-4 w-4 rounded-sm" />
-            <Skeleton className="h-4 w-1/4 ml-4" />
-            <Skeleton className="h-4 w-1/4 ml-4" />
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center justify-end space-x-2">
-        <Skeleton className="h-8 w-24" />
-        <Skeleton className="h-8 w-24" />
-      </div>
-    </div>
-  );
+    );
+  }
 
   return (
     <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
@@ -55,11 +62,11 @@ const AccountClient = ({ data }: { data: FinancialAccount[] }) => {
         </CardHeader>
         <CardContent>
           <DataTable
+            onDelete={handleBulkDelete}
             filterKey="name"
             columns={columns}
             data={data}
-            onDelete={() => {}}
-            disabled={false}
+            disabled={isPending}
           />
         </CardContent>
       </Card>
