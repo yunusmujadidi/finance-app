@@ -15,6 +15,8 @@ import { Button } from "../ui/button";
 import { Loader2, Trash } from "lucide-react";
 import { createAccount } from "@/lib/actions/account-actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { UseNewAccount } from "@/lib/hooks/use-new-account";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -38,6 +40,9 @@ export const AccountForm = ({
   disabled,
 }: AccountFormProps) => {
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+  const { onClose } = UseNewAccount();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
@@ -54,10 +59,11 @@ export const AccountForm = ({
       form.reset({
         name: "",
       });
+      router.refresh();
+      onClose();
     } else {
       toast.error(result.error);
     }
-    return console.log(result);
   };
 
   const handleDelete = () => {

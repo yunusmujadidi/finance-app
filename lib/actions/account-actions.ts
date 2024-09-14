@@ -22,3 +22,30 @@ export const createAccount = async (values: { name: string }) => {
     return { success: false, error: "Failed to create account" };
   }
 };
+
+export const getAccount = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    return [];
+  }
+
+  try {
+    const result = await prisma.financialAccount.findMany({
+      where: {
+        userId: currentUser.id,
+      },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return result;
+  } catch (error) {
+    console.error("Failed to fetch accounts:", error);
+    throw new Error("Failed to fetch accounts");
+  }
+};
