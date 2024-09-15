@@ -1,15 +1,16 @@
+import { Categories } from "@prisma/client";
 import { create } from "zustand";
 
 type newCategoryState = {
-  id?: string;
+  data?: Categories;
   isOpen: boolean;
-  onOpen: (id: string) => void;
+  onOpen: (data: Categories) => void;
   onClose: () => void;
 };
 
 export const useEditCategory = create<newCategoryState>((set) => ({
   id: undefined,
   isOpen: false,
-  onOpen: (id: string) => set({ isOpen: true, id }),
-  onClose: () => set({ isOpen: false, id: undefined }),
+  onOpen: (data: Categories) => set({ isOpen: true, data }),
+  onClose: () => set({ isOpen: false, data: undefined }),
 }));

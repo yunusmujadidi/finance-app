@@ -1,4 +1,4 @@
-import SignInClient from "@/app/sign-in/signinclient";
+import SignInClient from "@/app/(auth)/sign-in/signinclient";
 import { getCurrentUser } from "@/lib/actions/get-current-user";
 import SignOutButton from "./sign-out";
 

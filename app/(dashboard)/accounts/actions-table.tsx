@@ -8,11 +8,12 @@ import {
 import { deleteAccount } from "@/lib/actions/account-actions";
 import { useConfirm } from "@/lib/hooks/use-confirm";
 import { useEditAccount } from "@/lib/hooks/use-edit-account";
+import { FinancialAccount } from "@prisma/client";
 import { Delete, Edit, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export const ActionsTable = ({ id }: { id: string }) => {
+export const ActionsTable = ({ data }: { data: FinancialAccount }) => {
   const { onOpen } = useEditAccount();
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
@@ -46,11 +47,14 @@ export const ActionsTable = ({ id }: { id: string }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem disabled={false} onClick={() => onOpen(id)}>
+          <DropdownMenuItem disabled={false} onClick={() => onOpen(data)}>
             <Edit className="size-4 mr-2" />
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem disabled={false} onClick={() => handleDelete(id)}>
+          <DropdownMenuItem
+            disabled={false}
+            onClick={() => handleDelete(data.id)}
+          >
             <Delete className="size-4 mr-2" />
             Delete
           </DropdownMenuItem>

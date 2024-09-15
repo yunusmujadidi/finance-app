@@ -1,15 +1,16 @@
+import { FinancialAccount } from "@prisma/client";
 import { create } from "zustand";
 
 type newAccountState = {
-  id?: string;
+  data?: FinancialAccount;
   isOpen: boolean;
-  onOpen: (id: string) => void;
+  onOpen: (data: FinancialAccount) => void;
   onClose: () => void;
 };
 
 export const useEditAccount = create<newAccountState>((set) => ({
   id: undefined,
   isOpen: false,
-  onOpen: (id: string) => set({ isOpen: true, id }),
-  onClose: () => set({ isOpen: false, id: undefined }),
+  onOpen: (data: FinancialAccount) => set({ isOpen: true, data }),
+  onClose: () => set({ isOpen: false, data: undefined }),
 }));

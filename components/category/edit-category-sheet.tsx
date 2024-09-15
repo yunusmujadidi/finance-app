@@ -19,9 +19,8 @@ import { useConfirm } from "@/lib/hooks/use-confirm";
 import { Categories } from "@prisma/client";
 
 export const EditCategorySheet = () => {
-  const { isOpen, onClose, id } = useEditCategory();
+  const { isOpen, onClose, data } = useEditCategory();
   const [loading, setLoading] = useState(false);
-  const [category, setcategory] = useState<Categories | null>(null);
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
     "You are about to delete this category."
@@ -29,24 +28,11 @@ export const EditCategorySheet = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchcategory = async () => {
-      if (id) {
-        const result = await getCategoryById({ id });
-        if (result && "id" in result) {
-          setcategory(result);
-        }
-      }
-    };
-
-    fetchcategory();
-  }, [id]);
-
   const onSubmit = async (values: FormValues) => {
     setLoading(true);
     const result = await updateCategory({
       name: values.name,
-      id: id as string,
+      id: data?.id as string,
     });
     setLoading(false);
     if (result.success) {
@@ -63,7 +49,7 @@ export const EditCategorySheet = () => {
     if (ok) {
       setLoading(true);
       const result = await deleteCategory({
-        id: id as string,
+        id: data?.id as string,
       });
       setLoading(false);
       if (result.success) {
@@ -89,10 +75,10 @@ export const EditCategorySheet = () => {
           </SheetHeader>
           <CategoryForm
             onDelete={onDelete}
-            id={id}
+            id={data?.id}
             onSubmit={onSubmit}
             disabled={loading}
-            defaultValues={category ? { name: category.name } : { name: "" }}
+            defaultValues={data ? { name: data.name } : { name: "" }}
           />
         </SheetContent>
       </Sheet>

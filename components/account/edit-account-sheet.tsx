@@ -18,8 +18,8 @@ import { useRouter } from "next/navigation";
 import { useConfirm } from "@/lib/hooks/use-confirm";
 import { FinancialAccount } from "@prisma/client";
 
-export const EditAccountSheeet = () => {
-  const { isOpen, onClose, id } = useEditAccount();
+export const EditAccountSheet = () => {
+  const { isOpen, onClose, data } = useEditAccount();
   const [loading, setLoading] = useState(false);
   const [account, setAccount] = useState<FinancialAccount | null>(null);
   const [ConfirmDialog, confirm] = useConfirm(
@@ -29,24 +29,11 @@ export const EditAccountSheeet = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchAccount = async () => {
-      if (id) {
-        const result = await getAccountById({ id });
-        if (result && "id" in result) {
-          setAccount(result);
-        }
-      }
-    };
-
-    fetchAccount();
-  }, [id]);
-
   const onSubmit = async (values: FormValues) => {
     setLoading(true);
     const result = await updateAccount({
       name: values.name,
-      id: id as string,
+      id: data?.id as string,
     });
     setLoading(false);
     if (result.success) {
@@ -63,7 +50,7 @@ export const EditAccountSheeet = () => {
     if (ok) {
       setLoading(true);
       const result = await deleteAccount({
-        id: id as string,
+        id: data?.id as string,
       });
       setLoading(false);
       if (result.success) {
@@ -89,10 +76,10 @@ export const EditAccountSheeet = () => {
           </SheetHeader>
           <AccountForm
             onDelete={onDelete}
-            id={id}
+            id={data?.id}
             onSubmit={onSubmit}
             disabled={loading}
-            defaultValues={account ? { name: account.name } : { name: "" }}
+            defaultValues={data ? { name: data.name } : { name: "" }}
           />
         </SheetContent>
       </Sheet>
