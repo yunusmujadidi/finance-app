@@ -1,11 +1,11 @@
-import { useEditCategory } from "@/lib/hooks/use-edit-category";
+import { useEditCategory } from "@/modules/category/hooks/use-edit-category";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "../ui/sheet";
+} from "../../components/ui/sheet";
 import { CategoryForm, FormValues } from "./category-form";
 import {
   deleteCategory,

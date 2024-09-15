@@ -4,7 +4,7 @@ import { Loader2, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNewCategory } from "@/lib/hooks/use-new-category";
+import { useNewCategory } from "@/modules/category/hooks/use-new-category";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
 import { Categories } from "@prisma/client";

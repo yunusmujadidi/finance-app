@@ -1,11 +1,11 @@
-import { useNewCategory } from "@/lib/hooks/use-new-category";
+import { useNewCategory } from "@/modules/category/hooks/use-new-category";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "../ui/sheet";
+} from "../../components/ui/sheet";
 import { CategoryForm, FormValues } from "./category-form";
 import { createCategory } from "@/lib/actions/category-actions";
 import { toast } from "sonner";

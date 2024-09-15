@@ -6,6 +6,7 @@ import { FinancialAccount } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { ActionsTable } from "./actions-table";
+import { formatDate } from "@/lib/format-date";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -60,6 +61,11 @@ export const columns: ColumnDef<FinancialAccount>[] = [
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      // Format the date here
+      const formattedDate = formatDate(row.getValue("createdAt"));
+      return <div>{formattedDate}</div>;
     },
   },
   {

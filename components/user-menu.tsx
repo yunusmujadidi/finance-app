@@ -36,7 +36,7 @@ export const UserMenu = ({ currentUser }: { currentUser: User | null }) => {
       </DropdownMenuTrigger>
 
       {currentUser ? (
-        <DropdownMenuContent className="w-40 mx-5">
+        <DropdownMenuContent align="end" className="w-40 mx-5">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>

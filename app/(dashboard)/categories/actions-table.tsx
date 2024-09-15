@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { deleteCategory } from "@/lib/actions/category-actions";
 import { useConfirm } from "@/lib/hooks/use-confirm";
-import { useEditCategory } from "@/lib/hooks/use-edit-category";
+import { useEditCategory } from "@/modules/category/hooks/use-edit-category";
 import { Categories } from "@prisma/client";
 import { Delete, Edit, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";

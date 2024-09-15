@@ -1,4 +1,4 @@
-import { useEditAccount } from "@/lib/hooks/use-edit-account";
+import { useEditAccount } from "@/feature/account/hooks/use-edit-account";
 import {
   Sheet,
   SheetContent,

@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { deleteAccount } from "@/lib/actions/account-actions";
 import { useConfirm } from "@/lib/hooks/use-confirm";
-import { useEditAccount } from "@/lib/hooks/use-edit-account";
+import { useEditAccount } from "@/feature/account/hooks/use-edit-account";
 import { FinancialAccount } from "@prisma/client";
 import { Delete, Edit, MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";

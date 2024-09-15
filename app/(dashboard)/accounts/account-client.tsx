@@ -4,7 +4,7 @@ import { Loader2, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UseNewAccount } from "@/lib/hooks/use-new-account";
+import { UseNewAccount } from "@/feature/account/hooks/use-new-account";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
 import { FinancialAccount } from "@prisma/client";

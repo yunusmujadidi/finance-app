@@ -1,18 +1,18 @@
-import { UseNewAccount } from "@/lib/hooks/use-new-account";
+import { UseNewAccount } from "@/feature/account/hooks/use-new-account";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "../ui/sheet";
-import { AccountForm, FormValues } from "./account-form";
+} from "../../../components/ui/sheet";
+import { TransactionForm, FormValues } from "./transaction-form";
 import { createAccount } from "@/lib/actions/account-actions";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export const NewAccountSheet = () => {
+export const NewTransactionSheet = () => {
   const { isOpen, onClose } = UseNewAccount();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -41,7 +41,7 @@ export const NewAccountSheet = () => {
             Create a new account to track your transactions
           </SheetDescription>
         </SheetHeader>
-        <AccountForm onSubmit={onSubmit} disabled={loading} />
+        <TransactionForm onSubmit={onSubmit} disabled={loading} />
       </SheetContent>
     </Sheet>
   );
