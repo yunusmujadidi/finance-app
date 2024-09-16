@@ -5,10 +5,17 @@ import { NewAccountSheet } from "@/modules/account/components/new-account-sheet"
 import { EditAccountSheet } from "@/modules/account/components/edit-account-sheet";
 import { EditCategorySheet } from "@/modules/category/components/edit-category-sheet";
 import { NewCategorySheet } from "@/modules/category/components/new-category-sheet";
-import { NewTransactionSheet } from "@/modules/transaction/components/new-account-sheet";
-import { EditTransactionSheet } from "@/modules/transaction/components/edit-account-sheet";
+import { NewTransactionSheet } from "@/modules/transaction/components/new-transaction-sheet";
+import { EditTransactionSheet } from "@/modules/transaction/components/edit-transaction-sheet";
+import { Categories, FinancialAccount } from "@prisma/client";
 
-export const SheetProviders = () => {
+export const SheetClient = ({
+  account,
+  category,
+}: {
+  account: FinancialAccount[];
+  category: Categories[];
+}) => {
   const isMounted = useMountedState();
 
   if (!isMounted) return null;
@@ -18,7 +25,7 @@ export const SheetProviders = () => {
       <EditAccountSheet />
       <EditCategorySheet />
       <NewCategorySheet />
-      <NewTransactionSheet />
+      <NewTransactionSheet category={category} account={account} />
       <EditTransactionSheet />
     </>
   );

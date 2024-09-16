@@ -11,24 +11,42 @@ import { createTransaction } from "@/lib/actions/transaction-actions";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Categories, FinancialAccount } from "@prisma/client";
+import { getCurrentUser } from "@/lib/actions/get-current-user";
 
-export const NewTransactionSheet = () => {
+export const NewTransactionSheet = ({
+  account,
+  category,
+}: {
+  account: FinancialAccount[];
+  category: Categories[];
+}) => {
   const { isOpen, onClose } = UseNewTransaction();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const onSubmit = async (values: FormValues) => {
     setLoading(true);
-    const result = await createTransaction({
-      name: values.name,
-    });
-    setLoading(false);
-    if (result.success) {
-      toast.success("Transaction created successfully");
-      router.refresh();
-      onClose();
-    } else {
-      toast.error(result.error);
+    try {
+      const currentUser = await getCurrentUser();
+      if (!currentUser) {
+        toast.error("Please login first!");
+        return;
+      }
+
+      const result = await createTransaction({ values });
+      if (result) {
+        toast.success("Transaction created successfully");
+        router.refresh();
+        onClose();
+      } else {
+        toast.error("Failed to create transaction");
+      }
+    } catch (error) {
+      console.error("Error creating transaction:", error);
+      toast.error("An error occurred while creating the transaction");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,7 +59,12 @@ export const NewTransactionSheet = () => {
             Create a new transaction to track your transactions
           </SheetDescription>
         </SheetHeader>
-        <TransactionForm onSubmit={onSubmit} disabled={loading} />
+        <TransactionForm
+          account={account}
+          onSubmit={onSubmit}
+          disabled={loading}
+          category={category}
+        />
       </SheetContent>
     </Sheet>
   );

@@ -1,29 +1,58 @@
 import React, { useState } from "react";
-import { number, z } from "zod";
+import { z } from "zod";
+import { format } from "date-fns";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "../../../components/ui/form";
+import { Calendar } from "@/components/ui/calendar";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
-import { Loader2, Trash } from "lucide-react";
+import { CalendarIcon, Loader2, Trash } from "lucide-react";
 
 import { useRouter } from "next/navigation";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Categories, FinancialAccount } from "@prisma/client";
+import { Textarea } from "@/components/ui/textarea";
+import { Check, ChevronsUpDown, Plus } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { createCategory } from "@/lib/actions/category-actions";
+import { toast } from "sonner";
 
 const formSchema = z.object({
-  amount: z.number().min(1, {
+  amount: z.coerce.number().min(1, {
     message: "Pleas enter your amount",
   }),
   payee: z.string().min(1, {
     message: "Pleas enter your recipient",
   }),
-  notes: z.string(),
+  notes: z.string().optional(),
   date: z.date({
     required_error: "Date is required",
   }),
@@ -39,6 +68,8 @@ interface TransactionFormProps {
   onDelete?: () => void;
   disabled: boolean;
   onSubmit: (values: FormValues) => Promise<void>;
+  account: FinancialAccount[];
+  category: Categories[];
 }
 
 export const TransactionForm = ({
@@ -47,9 +78,13 @@ export const TransactionForm = ({
   onDelete,
   onSubmit,
   disabled,
+  account,
+  category,
 }: TransactionFormProps) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -71,24 +106,178 @@ export const TransactionForm = ({
     setLoading(false);
   };
 
+  const handleCreateCategory = async (name: string) => {
+    setLoading(true);
+    const result = await createCategory({
+      name: name,
+    });
+    setLoading(false);
+    if (result.success) {
+      toast.success("category created successfully");
+    } else {
+      toast.error(result.error);
+    }
+    router.refresh();
+    form.setValue("categoryId", result.result?.id as string);
+    setOpen(false);
+    setSearchValue("");
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
         <FormField
-          name="amount"
+          control={form.control}
+          name="date"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[240px] pl-3 text-left font-normal",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <FormDescription>
+                Your date of birth is used to calculate your age.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="payee"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Amount</FormLabel>
+              <FormLabel>Recepient</FormLabel>
               <FormControl>
                 <Input
-                  type="number"
+                  type="text"
                   defaultValue={defaultValues?.amount}
                   disabled={disabled || loading}
-                  placeholder="10000"
+                  placeholder="Enter your recepient..."
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="accountId"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Account</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Account" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {account.map((item) => (
+                      <SelectItem
+                        className="w-full "
+                        value={item.id}
+                        key={item.id}
+                      >
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="categoryId"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Category</FormLabel>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      className="w-full justify-between"
+                      disabled={disabled}
+                    >
+                      {field.value
+                        ? category.find((cat) => cat.id === field.value)?.name
+                        : "Select category..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="flex w-full p-0">
+                  <Command className="w-full">
+                    <CommandInput
+                      placeholder="Search or create..."
+                      onValueChange={setSearchValue}
+                    />
+                    <CommandList className="w-full">
+                      <CommandEmpty>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          onClick={() => handleCreateCategory(searchValue)}
+                        >
+                          Create &ldquo;{searchValue}&rdquo;
+                        </Button>
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {category.map((cat) => (
+                          <CommandItem
+                            key={cat.id}
+                            value={cat.name}
+                            onSelect={() => {
+                              form.setValue("categoryId", cat.id);
+                              setOpen(false);
+                            }}
+                          >
+                            {cat.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}
@@ -113,74 +302,15 @@ export const TransactionForm = ({
           )}
         />
         <FormField
-          name="amount"
+          name="notes"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Amount</FormLabel>
+              <FormLabel>Notes</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  defaultValue={defaultValues?.amount}
-                  disabled={disabled || loading}
-                  placeholder="10000"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          name="amount"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Amount</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  defaultValue={defaultValues?.amount}
-                  disabled={disabled || loading}
-                  placeholder="10000"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          name="amount"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Amount</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  defaultValue={defaultValues?.amount}
-                  disabled={disabled || loading}
-                  placeholder="10000"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          name="amount"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Amount</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  defaultValue={defaultValues?.amount}
-                  disabled={disabled || loading}
-                  placeholder="10000"
+                <Textarea
+                  placeholder="Optional notes"
+                  className="resize-none"
                   {...field}
                 />
               </FormControl>
@@ -189,15 +319,15 @@ export const TransactionForm = ({
           )}
         />
         <Button className="w-full" disabled={disabled || loading}>
-          {loading && <Loader2 className="size-4 animate-spin mr-2" />}{" "}
-          {id ? "Save changes" : "Create account"}
+          {loading && <Loader2 className="size-4 animate-spin mr-2" />}
+          {id ? "Save changes" : "Create transaction"}
         </Button>
         {!!id && (
           <Button
             className="w-full"
             type="button"
             disabled={disabled || loading}
-            onClick={handleDelete}
+            onClick={onDelete}
             variant="outline"
           >
             <Trash className="size-4 mr-2" /> Delete account

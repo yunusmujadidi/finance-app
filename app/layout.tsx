@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { SheetProviders } from "@/lib/providers/sheet-providers";
+import { SheetClient } from "@/lib/providers/sheet-client";
 import { Toaster } from "sonner";
+import SheetProvider from "@/lib/providers/sheet-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SheetProviders />
+        <SheetProvider />
         <Toaster />
         <main>{children}</main>
       </body>
