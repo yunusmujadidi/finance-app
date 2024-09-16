@@ -5,19 +5,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { deleteCategory } from "@/lib/actions/category-actions";
 import { useConfirm } from "@/lib/hooks/use-confirm";
-import { useEditCategory } from "@/modules/category/hooks/use-edit-category";
-import { Categories } from "@prisma/client";
+import { useEditTransaction } from "@/modules/transaction/hooks/use-edit-transaction";
+import { Transaction } from "@prisma/client";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export const ActionsTable = ({ data }: { data: Categories }) => {
-  const { onOpen } = useEditCategory();
+export const ActionsTable = ({ data }: { data: Transaction }) => {
+  const { onOpen } = useEditTransaction();
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
-    "You are about to delete this category."
+    "You are about to delete this transaction."
   );
 
   const router = useRouter();
@@ -25,12 +24,12 @@ export const ActionsTable = ({ data }: { data: Categories }) => {
   const handleDelete = async (id: string) => {
     const ok = await confirm();
     if (ok) {
-      const result = await deleteCategory({
+      const result = await deleteTransaction({
         id,
       });
 
       if (result.success) {
-        toast.success("Category deleted successfully");
+        toast.success("Transaction deleted successfully");
         router.refresh();
       } else {
         toast.error("Something went wrong");

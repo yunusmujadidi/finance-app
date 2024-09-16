@@ -1,43 +1,38 @@
-import { useEditAccount } from "@/feature/account/hooks/use-edit-account";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "../../../components/ui/sheet";
+} from "@/components/ui/sheet";
 import { TransactionForm, FormValues } from "./transaction-form";
-import {
-  deleteAccount,
-  getAccountById,
-  updateAccount,
-} from "@/lib/actions/account-actions";
+
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useConfirm } from "@/lib/hooks/use-confirm";
-import { FinancialAccount } from "@prisma/client";
+import { Transaction } from "@prisma/client";
+import { useEditTransaction } from "../hooks/use-edit-transaction";
 
 export const EditTransactionSheet = () => {
-  const { isOpen, onClose, data } = useEditAccount();
+  const { isOpen, onClose, data } = useEditTransaction();
   const [loading, setLoading] = useState(false);
-  const [account, setAccount] = useState<FinancialAccount | null>(null);
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
-    "You are about to delete this account."
+    "You are about to delete this transaction."
   );
 
   const router = useRouter();
 
   const onSubmit = async (values: FormValues) => {
     setLoading(true);
-    const result = await updateAccount({
+    const result = await updateTransaction({
       name: values.name,
       id: data?.id as string,
     });
     setLoading(false);
     if (result.success) {
-      toast.success("Account updated successfully");
+      toast.success("Transaction updated successfully");
       router.refresh();
       onClose();
     } else {
@@ -49,12 +44,12 @@ export const EditTransactionSheet = () => {
     const ok = await confirm();
     if (ok) {
       setLoading(true);
-      const result = await deleteAccount({
+      const result = await deleteTransaction({
         id: data?.id as string,
       });
       setLoading(false);
       if (result.success) {
-        toast.success("Account deleted successfully");
+        toast.success("Transaction deleted successfully");
         router.refresh();
         onClose();
       } else {
@@ -69,9 +64,9 @@ export const EditTransactionSheet = () => {
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent className="space-y-4">
           <SheetHeader>
-            <SheetTitle>Edit Account</SheetTitle>
+            <SheetTitle>Edit Transaction</SheetTitle>
             <SheetDescription>
-              Create a new account to track your transactions
+              Create a new transaction to track your transactions
             </SheetDescription>
           </SheetHeader>
           <TransactionForm

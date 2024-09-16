@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { z } from "zod";
+import { number, z } from "zod";
 import {
   Form,
   FormControl,
@@ -17,9 +17,18 @@ import { Loader2, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+  amount: z.number().min(1, {
+    message: "Pleas enter your amount",
   }),
+  payee: z.string().min(1, {
+    message: "Pleas enter your recipient",
+  }),
+  notes: z.string(),
+  date: z.date({
+    required_error: "Date is required",
+  }),
+  categoryId: z.string().min(1),
+  accountId: z.string().min(1),
 });
 
 export type FormValues = z.input<typeof formSchema>;
@@ -51,7 +60,12 @@ export const TransactionForm = ({
     setLoading(true);
     onDelete?.();
     form.reset({
-      name: "",
+      amount: 1,
+      payee: "",
+      notes: "",
+      date: new Date(),
+      categoryId: "",
+      accountId: "",
     });
     router.refresh();
     setLoading(false);
@@ -61,16 +75,112 @@ export const TransactionForm = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
         <FormField
-          name="name"
+          name="amount"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Amount</FormLabel>
               <FormControl>
                 <Input
-                  defaultValue={defaultValues?.name}
+                  type="number"
+                  defaultValue={defaultValues?.amount}
                   disabled={disabled || loading}
-                  placeholder="e.g. Cash, Bank, Credit Card"
+                  placeholder="10000"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="amount"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Amount</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  defaultValue={defaultValues?.amount}
+                  disabled={disabled || loading}
+                  placeholder="10000"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="amount"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Amount</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  defaultValue={defaultValues?.amount}
+                  disabled={disabled || loading}
+                  placeholder="10000"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="amount"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Amount</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  defaultValue={defaultValues?.amount}
+                  disabled={disabled || loading}
+                  placeholder="10000"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="amount"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Amount</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  defaultValue={defaultValues?.amount}
+                  disabled={disabled || loading}
+                  placeholder="10000"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="amount"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Amount</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  defaultValue={defaultValues?.amount}
+                  disabled={disabled || loading}
+                  placeholder="10000"
                   {...field}
                 />
               </FormControl>

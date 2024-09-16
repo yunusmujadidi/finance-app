@@ -7,9 +7,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { deleteAccount } from "@/lib/actions/account-actions";
 import { useConfirm } from "@/lib/hooks/use-confirm";
-import { useEditAccount } from "@/feature/account/hooks/use-edit-account";
+import { useEditAccount } from "@/modules/account/hooks/use-edit-account";
 import { FinancialAccount } from "@prisma/client";
-import { Delete, Edit, MoreHorizontal } from "lucide-react";
+import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -55,7 +55,7 @@ export const ActionsTable = ({ data }: { data: FinancialAccount }) => {
             disabled={false}
             onClick={() => handleDelete(data.id)}
           >
-            <Delete className="size-4 mr-2" />
+            <Trash className="size-4 mr-2" />
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -4,26 +4,25 @@ import { Loader2, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UseNewAccount } from "@/modules/account/hooks/use-new-account";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
-import { FinancialAccount } from "@prisma/client";
+import { Transaction } from "@prisma/client";
 import { useTransition } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { bulkDeleteAccounts } from "@/lib/actions/account-actions";
 import { useRouter } from "next/navigation";
+import { UseNewTransaction } from "@/modules/transaction/hooks/use-new-transaction";
 
-const AccountClient = ({ data }: { data: FinancialAccount[] }) => {
+const TransactionClient = ({ data }: { data: Transaction[] }) => {
   const [isPending, startTransition] = useTransition();
-  const { onOpen } = UseNewAccount();
+  const { onOpen } = UseNewTransaction();
 
   const router = useRouter();
 
   const handleBulkDelete = async (selectedIds: string[]) => {
     startTransition(async () => {
       try {
-        const result = await bulkDeleteAccounts(selectedIds);
+        const result = await bulkDeleteTransactions(selectedIds);
 
         toast.success(`Successfully deleted ${result.deletedCount} accounts`);
         router.refresh();
@@ -75,4 +74,4 @@ const AccountClient = ({ data }: { data: FinancialAccount[] }) => {
   );
 };
 
-export default AccountClient;
+export default TransactionClient;

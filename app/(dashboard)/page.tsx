@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { UseNewAccount } from "@/feature/account/hooks/use-new-account";
+import { UseNewAccount } from "@/modules/account/hooks/use-new-account";
 import React from "react";
 
 const Dashboard = () => {

@@ -5,7 +5,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "../../components/ui/sheet";
+} from "@/components/ui/sheet";
 import { CategoryForm, FormValues } from "./category-form";
 import { createCategory } from "@/lib/actions/category-actions";
 import { toast } from "sonner";

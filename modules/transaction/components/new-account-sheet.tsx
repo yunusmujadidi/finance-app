@@ -1,30 +1,30 @@
-import { UseNewAccount } from "@/feature/account/hooks/use-new-account";
+import { UseNewTransaction } from "@/modules/transaction/hooks/use-new-transaction";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "../../../components/ui/sheet";
+} from "@/components/ui/sheet";
 import { TransactionForm, FormValues } from "./transaction-form";
-import { createAccount } from "@/lib/actions/account-actions";
+import { createTransaction } from "@/lib/actions/transaction-actions";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export const NewTransactionSheet = () => {
-  const { isOpen, onClose } = UseNewAccount();
+  const { isOpen, onClose } = UseNewTransaction();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const onSubmit = async (values: FormValues) => {
     setLoading(true);
-    const result = await createAccount({
+    const result = await createTransaction({
       name: values.name,
     });
     setLoading(false);
     if (result.success) {
-      toast.success("Account created successfully");
+      toast.success("Transaction created successfully");
       router.refresh();
       onClose();
     } else {
@@ -36,9 +36,9 @@ export const NewTransactionSheet = () => {
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="space-y-4">
         <SheetHeader>
-          <SheetTitle>New Account</SheetTitle>
+          <SheetTitle>New Transaction</SheetTitle>
           <SheetDescription>
-            Create a new account to track your transactions
+            Create a new transaction to track your transactions
           </SheetDescription>
         </SheetHeader>
         <TransactionForm onSubmit={onSubmit} disabled={loading} />

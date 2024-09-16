@@ -1,11 +1,11 @@
-import { useEditAccount } from "@/feature/account/hooks/use-edit-account";
+import { useEditAccount } from "@/modules/account/hooks/use-edit-account";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "../ui/sheet";
+} from "@/components/ui/sheet";
 import { AccountForm, FormValues } from "./account-form";
 import {
   deleteAccount,

@@ -1,11 +1,11 @@
-import { UseNewAccount } from "@/feature/account/hooks/use-new-account";
+import { UseNewAccount } from "@/modules/account/hooks/use-new-account";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "../ui/sheet";
+} from "@/components/ui/sheet";
 import { AccountForm, FormValues } from "./account-form";
 import { createAccount } from "@/lib/actions/account-actions";
 import { toast } from "sonner";
