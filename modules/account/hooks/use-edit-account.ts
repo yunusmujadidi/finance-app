@@ -9,7 +9,7 @@ type newAccountState = {
 };
 
 export const useEditAccount = create<newAccountState>((set) => ({
-  id: undefined,
+  data: undefined,
   isOpen: false,
   onOpen: (data: FinancialAccount) => set({ isOpen: true, data }),
   onClose: () => set({ isOpen: false, data: undefined }),

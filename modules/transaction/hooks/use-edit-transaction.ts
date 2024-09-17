@@ -1,16 +1,16 @@
-import { FinancialAccount } from "@prisma/client";
+import { Transaction } from "@prisma/client";
 import { create } from "zustand";
 
 type newTransactionState = {
-  data?: FinancialAccount;
+  data?: Transaction;
   isOpen: boolean;
-  onOpen: (data: FinancialAccount) => void;
+  onOpen: (data: Transaction) => void;
   onClose: () => void;
 };
 
 export const useEditTransaction = create<newTransactionState>((set) => ({
-  id: undefined,
+  data: undefined,
   isOpen: false,
-  onOpen: (data: FinancialAccount) => set({ isOpen: true, data }),
-  onClose: () => set({ isOpen: false, data: undefined }),
+  onOpen: (data: Transaction) => set({ isOpen: true, data }),
+  onClose: () => set({ isOpen: false }),
 }));

@@ -7,21 +7,15 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { AccountForm, FormValues } from "./account-form";
-import {
-  deleteAccount,
-  getAccountById,
-  updateAccount,
-} from "@/lib/actions/account-actions";
+import { deleteAccount, updateAccount } from "@/lib/actions/account-actions";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useConfirm } from "@/lib/hooks/use-confirm";
-import { FinancialAccount } from "@prisma/client";
 
 export const EditAccountSheet = () => {
   const { isOpen, onClose, data } = useEditAccount();
   const [loading, setLoading] = useState(false);
-  const [account, setAccount] = useState<FinancialAccount | null>(null);
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
     "You are about to delete this account."

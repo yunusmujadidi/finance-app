@@ -36,7 +36,7 @@ interface DataTableProps<TData extends { id: string }, TValue> {
   onDelete: (rows: string[]) => void;
   disabled?: boolean;
   resetSelection?: boolean;
-  onUpdate: (id: string) => void
+  onUpdate: (id: string) => void;
 }
 
 export function DataTable<TData extends { id: string }, TValue>({
@@ -86,6 +86,7 @@ export function DataTable<TData extends { id: string }, TValue>({
       <ConfirmDialog />
       <div className="flex items-center py-4">
         <Input
+          // todo: fix
           placeholder={`Filter ${filterKey}...`}
           value={(table.getColumn(filterKey)?.getFilterValue() as string) ?? ""}
           onChange={(event) =>

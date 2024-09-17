@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { deleteTransaction } from "@/lib/actions/transaction-actions";
 import { useConfirm } from "@/lib/hooks/use-confirm";
 import { useEditTransaction } from "@/modules/transaction/hooks/use-edit-transaction";
 import { Transaction } from "@prisma/client";

@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { UseNewTransaction } from "@/modules/transaction/hooks/use-new-transaction";
+import { deleteBulkTransactions } from "@/lib/actions/transaction-actions";
 
 const TransactionClient = ({ data }: { data: Transaction[] }) => {
   const [isPending, startTransition] = useTransition();
@@ -22,12 +23,14 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
   const handleBulkDelete = async (selectedIds: string[]) => {
     startTransition(async () => {
       try {
-        const result = await bulkDeleteTransactions(selectedIds);
+        const result = await deleteBulkTransactions(selectedIds as string[]);
 
-        toast.success(`Successfully deleted ${result.deletedCount} accounts`);
+        toast.success(
+          `Successfully deleted ${result.deletedCount} transactions`
+        );
         router.refresh();
       } catch (error) {
-        toast.error("Failed to delete accounts");
+        toast.error("Failed to delete transactions");
         console.error("Bulk delete error:", error);
       }
     });
@@ -54,7 +57,9 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
     <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
       <Card className="border-none drop-shadow-sm">
         <CardHeader className="gap-y-2 lg:flex-row lg:items-center lg:justify-between">
-          <CardTitle className="text-xl line-clamp-1">Account page</CardTitle>
+          <CardTitle className="text-xl line-clamp-1">
+            Transaction History
+          </CardTitle>
           <Button size="sm" onClick={onOpen}>
             <Plus className="size-4 mr-4" /> Add new
           </Button>
@@ -63,7 +68,7 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
           <DataTable
             onUpdate={() => {}}
             onDelete={handleBulkDelete}
-            filterKey="name"
+            filterKey="payee"
             columns={columns}
             data={data}
             disabled={isPending}

@@ -2,16 +2,21 @@
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Transaction } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-import { ActionsTable } from "./actions-table";
+import { ActionsTable } from "./table-actions";
 import { formatDate } from "@/lib/format-date";
+import { Transaction } from "@prisma/client";
+import { AccountColumn } from "./account-column";
+import { Badge } from "@/components/ui/badge";
+import { formatCurrency } from "@/lib/utils";
+import { CategoryColumm } from "./category-column";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
+// Define the Transaction type based on your data structure
 
-export const columns: ColumnDef<Transaction>[] = [
+export const columns: ColumnDef<
+  Transaction & { account: { name: string }; category: { name: string } }
+>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -34,39 +39,62 @@ export const columns: ColumnDef<Transaction>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-
   {
-    accessorKey: "name",
-    header: ({ column }) => {
+    accessorKey: "date",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Date
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => formatDate(row.original.date.toString()),
+  },
+  {
+    accessorKey: "amount",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Amount
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <div
+          className={`inline-flex items-center justify-center px-3 py-1.5 rounded-full text-xs font-medium ${
+            row.original.amount < 0
+              ? "bg-red-100 text-red-500"
+              : "bg-blue-100 text-blue-500"
+          }`}
         >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+          {formatCurrency(row.original.amount)}
+        </div>
       );
     },
   },
   {
-    accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Created At
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      // Format the date here
-      const formattedDate = formatDate(row.getValue("createdAt"));
-      return <div>{formattedDate}</div>;
-    },
+    accessorKey: "payee",
+    header: "Recipient",
+  },
+  {
+    accessorKey: "category.name",
+    header: "Category",
+    cell: ({ row }) => (
+      <CategoryColumm
+        transaction={row.original}
+        category={row.original.category}
+      />
+    ),
+  },
+  {
+    accessorKey: "account.name",
+    header: "Account",
+    cell: ({ row }) => <AccountColumn account={row.original.account} />,
   },
   {
     id: "actions",

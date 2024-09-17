@@ -31,7 +31,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Categories, FinancialAccount } from "@prisma/client";
+import {
+  Account,
+  Categories,
+  FinancialAccount,
+  Transaction,
+} from "@prisma/client";
 import { Textarea } from "@/components/ui/textarea";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import {
@@ -44,32 +49,36 @@ import {
 } from "@/components/ui/command";
 import { createCategory } from "@/lib/actions/category-actions";
 import { toast } from "sonner";
+import { AmountInput } from "@/components/amount-input";
 
 const formSchema = z.object({
-  amount: z.coerce.number().min(1, {
-    message: "Pleas enter your amount",
+  amount: z.coerce.number().refine((val) => val !== 0, {
+    message: "Please enter a non-zero amount",
   }),
   payee: z.string().min(1, {
-    message: "Pleas enter your recipient",
+    message: "Please enter your recipient",
   }),
   notes: z.string().optional(),
   date: z.date({
     required_error: "Date is required",
   }),
-  categoryId: z.string().min(1),
+  categoryId: z
+    .string()
+    .min(1, "Please create or select the category")
+    .optional(),
   accountId: z.string().min(1),
 });
 
 export type FormValues = z.input<typeof formSchema>;
 
 interface TransactionFormProps {
+  defaultValues?: any;
+  onDelete?: any;
   id?: string;
-  defaultValues?: FormValues;
-  onDelete?: () => void;
   disabled: boolean;
   onSubmit: (values: FormValues) => Promise<void>;
-  account: FinancialAccount[];
   category: Categories[];
+  account: FinancialAccount[];
 }
 
 export const TransactionForm = ({
@@ -107,13 +116,12 @@ export const TransactionForm = ({
   };
 
   const handleCreateCategory = async (name: string) => {
-    setLoading(true);
     const result = await createCategory({
       name: name,
     });
-    setLoading(false);
+
     if (result.success) {
-      toast.success("category created successfully");
+      toast.success("Category created successfully");
     } else {
       toast.error(result.error);
     }
@@ -162,9 +170,7 @@ export const TransactionForm = ({
                   />
                 </PopoverContent>
               </Popover>
-              <FormDescription>
-                Your date of birth is used to calculate your age.
-              </FormDescription>
+              <FormDescription>Pick your transaction date</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -179,7 +185,7 @@ export const TransactionForm = ({
               <FormControl>
                 <Input
                   type="text"
-                  defaultValue={defaultValues?.amount}
+                  defaultValue={defaultValues?.payee}
                   disabled={disabled || loading}
                   placeholder="Enter your recepient..."
                   {...field}
@@ -247,16 +253,17 @@ export const TransactionForm = ({
                 <PopoverContent className="flex w-full p-0">
                   <Command className="w-full">
                     <CommandInput
-                      placeholder="Search or create..."
+                      placeholder="Search or Create"
                       onValueChange={setSearchValue}
                     />
                     <CommandList className="w-full">
                       <CommandEmpty>
                         <Button
                           variant="ghost"
-                          className="w-full justify-start"
+                          className="items-start flex w-full justify-start"
                           onClick={() => handleCreateCategory(searchValue)}
                         >
+                          <Plus className="size-4 mr-2" />
                           Create &ldquo;{searchValue}&rdquo;
                         </Button>
                       </CommandEmpty>
@@ -289,11 +296,10 @@ export const TransactionForm = ({
             <FormItem>
               <FormLabel>Amount</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  defaultValue={defaultValues?.amount}
-                  disabled={disabled || loading}
-                  placeholder="10000"
+                <AmountInput
+                  defaultValue={field.value}
+                  disabled={disabled}
+                  placeholder="Enter the amount of transaction"
                   {...field}
                 />
               </FormControl>
@@ -327,10 +333,10 @@ export const TransactionForm = ({
             className="w-full"
             type="button"
             disabled={disabled || loading}
-            onClick={onDelete}
+            onClick={handleDelete}
             variant="outline"
           >
-            <Trash className="size-4 mr-2" /> Delete account
+            <Trash className="size-4 mr-2" /> Delete Transactions
           </Button>
         )}
       </form>

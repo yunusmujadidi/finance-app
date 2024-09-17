@@ -1,3 +1,4 @@
+"use client";
 import {
   Sheet,
   SheetContent,
@@ -8,13 +9,23 @@ import {
 import { TransactionForm, FormValues } from "./transaction-form";
 
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useConfirm } from "@/lib/hooks/use-confirm";
-import { Transaction } from "@prisma/client";
+import { Categories, FinancialAccount } from "@prisma/client";
 import { useEditTransaction } from "../hooks/use-edit-transaction";
+import {
+  deleteTransaction,
+  updateTransactions,
+} from "@/lib/actions/transaction-actions";
 
-export const EditTransactionSheet = () => {
+export const EditTransactionSheet = ({
+  account,
+  category,
+}: {
+  account: FinancialAccount[];
+  category: Categories[];
+}) => {
   const { isOpen, onClose, data } = useEditTransaction();
   const [loading, setLoading] = useState(false);
   const [ConfirmDialog, confirm] = useConfirm(
@@ -25,9 +36,10 @@ export const EditTransactionSheet = () => {
   const router = useRouter();
 
   const onSubmit = async (values: FormValues) => {
+    console.log("the values:", values);
     setLoading(true);
-    const result = await updateTransaction({
-      name: values.name,
+    const result = await updateTransactions({
+      ...values,
       id: data?.id as string,
     });
     setLoading(false);
@@ -58,6 +70,19 @@ export const EditTransactionSheet = () => {
     }
   };
 
+  const defaultValues = data
+    ? {
+        amount: data.amount || undefined,
+        payee: data.payee || "",
+        notes: data.notes || "",
+        date: data.date ? new Date(data.date) : undefined,
+        categoryId: data.categoryId || "",
+        accountId: data.accountId || "",
+      }
+    : undefined;
+
+  console.log("data", data);
+
   return (
     <>
       <ConfirmDialog />
@@ -74,7 +99,9 @@ export const EditTransactionSheet = () => {
             id={data?.id}
             onSubmit={onSubmit}
             disabled={loading}
-            defaultValues={data ? { name: data.name } : { name: "" }}
+            defaultValues={defaultValues}
+            account={account}
+            category={category}
           />
         </SheetContent>
       </Sheet>

@@ -1,9 +1,9 @@
-import { getAccount } from "@/lib/actions/account-actions";
-import TransactionClient from "./account-client";
+import TransactionClient from "./transaction-client";
 import { Transaction } from "@prisma/client";
+import { getTransactions } from "@/lib/actions/transaction-actions";
 
 const AccountsPage = async () => {
-  const data = await getAccount();
+  const data = await getTransactions();
 
   return (
     <>

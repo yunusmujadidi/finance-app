@@ -20,7 +20,7 @@ export const createTransaction = async ({
         amount: values.amount ?? 1,
         payee: values.payee ?? "",
         date: values.date ?? new Date(),
-        categoryId: values.categoryId ?? "",
+        categoryId: values.categoryId ?? null,
         accountId: values.accountId ?? "",
         notes: values.notes,
       },
@@ -29,5 +29,97 @@ export const createTransaction = async ({
     return result;
   } catch (error) {
     throw new Error(error as string);
+  }
+};
+
+export const getTransactions = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    throw new Error("Unauthorized");
+  }
+
+  try {
+    const result = await prisma.transaction.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        account: true,
+        category: true,
+      },
+    });
+
+    return result;
+  } catch (error) {
+    return console.error("Something went wrong:", error as string);
+  }
+};
+
+export const deleteTransaction = async ({ id }: { id: string }) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    throw new Error("Unauthorized");
+  }
+  try {
+    const result = await prisma.transaction.delete({
+      where: {
+        id: id as string,
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: "Failed to delete transaction" };
+  }
+};
+
+export const deleteBulkTransactions = async (selectedIds: string[]) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    throw new Error("Unauthorized");
+  }
+  try {
+    const result = await prisma.transaction.deleteMany({
+      where: {
+        id: { in: selectedIds },
+      },
+    });
+
+    return {
+      success: true,
+      message: `Success delete ${result.count} transactions`,
+      deletedCount: result.count,
+    };
+  } catch (error) {
+    return { success: false, message: "Something went wrong: ", error };
+  }
+};
+
+export const updateTransactions = async (values: Partial<Transaction>) => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    throw new Error("Unauthorized");
+  }
+  try {
+    const result = await prisma.transaction.update({
+      where: {
+        id: values.id,
+      },
+      data: {
+        amount: values.amount,
+        payee: values.payee,
+        date: values.date,
+        categoryId: values.categoryId,
+        accountId: values.accountId,
+        notes: values.notes,
+      },
+    });
+
+    return {
+      success: true,
+      message: "Success updated the transaction",
+      updatedData: result,
+    };
+  } catch (error) {
+    return { success: false, message: "Something went wrong: ", error };
   }
 };

@@ -9,7 +9,7 @@ type newCategoryState = {
 };
 
 export const useEditCategory = create<newCategoryState>((set) => ({
-  id: undefined,
+  data: undefined,
   isOpen: false,
   onOpen: (data: Categories) => set({ isOpen: true, data }),
   onClose: () => set({ isOpen: false, data: undefined }),

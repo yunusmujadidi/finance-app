@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Categories } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-import { ActionsTable } from "./actions-table";
+import { ActionsTable } from "./table-actions";
 import { formatDate } from "@/lib/format-date";
 
 // This type is used to define the shape of our data.
