@@ -68,9 +68,9 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
           <DataTable
             onUpdate={() => {}}
             onDelete={handleBulkDelete}
-            filterKey="payee"
+            filterKey="recepient"
             columns={columns}
-            data={data}
+            data={data as any}
             disabled={isPending}
           />
         </CardContent>

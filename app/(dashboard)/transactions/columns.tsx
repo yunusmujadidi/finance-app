@@ -53,6 +53,20 @@ export const columns: ColumnDef<
     cell: ({ row }) => formatDate(row.original.date.toString()),
   },
   {
+    accessorKey: "category.name",
+    header: "Category",
+    cell: ({ row }) => (
+      <CategoryColumm
+        transaction={row.original}
+        category={row.original.category}
+      />
+    ),
+  },
+  {
+    accessorKey: "payee",
+    header: "Recipient",
+  },
+  {
     accessorKey: "amount",
     header: ({ column }) => (
       <Button
@@ -77,20 +91,7 @@ export const columns: ColumnDef<
       );
     },
   },
-  {
-    accessorKey: "payee",
-    header: "Recipient",
-  },
-  {
-    accessorKey: "category.name",
-    header: "Category",
-    cell: ({ row }) => (
-      <CategoryColumm
-        transaction={row.original}
-        category={row.original.category}
-      />
-    ),
-  },
+
   {
     accessorKey: "account.name",
     header: "Account",
