@@ -1,24 +1,50 @@
 "use client";
 
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Upload } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { columns } from "./columns";
 import { DataTable } from "@/components/data-table";
 import { Transaction } from "@prisma/client";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { UseNewTransaction } from "@/modules/transaction/hooks/use-new-transaction";
 import { deleteBulkTransactions } from "@/lib/actions/transaction-actions";
+import { UploadButton } from "./upload-button";
+import { ImportCard } from "./import-card";
+
+enum VARIANT {
+  LIST = "LIST",
+  IMPORT = "IMPORT",
+}
+
+const INITIAL_IMPORT_RESULT = {
+  data: [],
+  errors: [],
+  meta: {},
+};
 
 const TransactionClient = ({ data }: { data: Transaction[] }) => {
+  const [variant, setVariant] = useState<VARIANT>(VARIANT.LIST);
   const [isPending, startTransition] = useTransition();
   const { onOpen } = UseNewTransaction();
+  const [importResult, setImportRResult] = useState(INITIAL_IMPORT_RESULT);
 
   const router = useRouter();
+
+  const onUpload = (results: typeof INITIAL_IMPORT_RESULT) => {
+    console.log({ results });
+    setImportRResult(results);
+    setVariant(VARIANT.IMPORT);
+  };
+
+  const onCancel = () => {
+    setImportRResult(INITIAL_IMPORT_RESULT);
+    setVariant(VARIANT.LIST);
+  };
 
   const handleBulkDelete = async (selectedIds: string[]) => {
     startTransition(async () => {
@@ -53,22 +79,35 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
     );
   }
 
+  if (variant === VARIANT.IMPORT) {
+    return (
+      <ImportCard
+        data={importResult.data}
+        onCancel={onCancel}
+        onSubmit={onUpload}
+      />
+    );
+  }
+
   return (
     <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
       <Card className="border-none drop-shadow-sm">
-        <CardHeader className="gap-y-2 lg:flex-row lg:items-center lg:justify-between">
+        <CardHeader className="gap-y-2 lg:flex-row lg:items-center  lg:justify-between">
           <CardTitle className="text-xl line-clamp-1">
             Transaction History
           </CardTitle>
-          <Button size="sm" onClick={onOpen}>
-            <Plus className="size-4 mr-4" /> Add new
-          </Button>
+          <div className="flex flex-col lg:flex-row gap-y-2 items-center gap-x-2">
+            <UploadButton onUpload={onUpload} />
+            <Button className="w-full lg:w-auto" size="sm" onClick={onOpen}>
+              <Plus className="size-4 mr-4" /> Add new
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <DataTable
             onUpdate={() => {}}
             onDelete={handleBulkDelete}
-            filterKey="recepient"
+            filterKey="payee"
             columns={columns}
             data={data as any}
             disabled={isPending}

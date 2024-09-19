@@ -36,7 +36,6 @@ export const EditTransactionSheet = ({
   const router = useRouter();
 
   const onSubmit = async (values: FormValues) => {
-    console.log("the values:", values);
     setLoading(true);
     const result = await updateTransactions({
       ...values,
@@ -80,8 +79,6 @@ export const EditTransactionSheet = ({
         accountId: data.accountId || "",
       }
     : undefined;
-
-  console.log("data", data);
 
   return (
     <>

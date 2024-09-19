@@ -123,3 +123,10 @@ export const updateTransactions = async (values: Partial<Transaction>) => {
     return { success: false, message: "Something went wrong: ", error };
   }
 };
+
+export const bulkCreateTransactions = async () => {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    throw new Error("Unauthorized");
+  }
+};
