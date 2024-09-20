@@ -124,9 +124,31 @@ export const updateTransactions = async (values: Partial<Transaction>) => {
   }
 };
 
-export const bulkCreateTransactions = async () => {
+export const bulkCreateTransactions = async (values: Transaction[]) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("Unauthorized");
+  }
+
+  try {
+    const result = await prisma.transaction.createMany({
+      data: values.map((transaction) => ({
+        amount: transaction.amount,
+        payee: transaction.payee,
+        date: transaction.date,
+        categoryId: transaction.categoryId,
+        accountId: transaction.accountId,
+        notes: transaction.notes,
+        userId: currentUser.id,
+      })),
+    });
+
+    return {
+      success: true,
+      message: `Successfully created ${result.count} transactions`,
+      createdCount: result.count,
+    };
+  } catch (error) {
+    return { success: false, message: "Something went wrong: ", error };
   }
 };
