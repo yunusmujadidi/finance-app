@@ -12,7 +12,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { UseNewTransaction } from "@/modules/transaction/hooks/use-new-transaction";
-import { deleteBulkTransactions } from "@/lib/actions/transaction-actions";
+import {
+  bulkCreateTransactions,
+  deleteBulkTransactions,
+} from "@/lib/actions/transaction-actions";
 import { UploadButton } from "./upload-button";
 import { ImportCard } from "./import-card";
 
@@ -62,6 +65,22 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
     });
   };
 
+  const onSubmitImport = async (values: Transaction[]) => {
+    startTransition(async () => {
+      try {
+        const result = await bulkCreateTransactions(values);
+
+        toast.success(
+          `Successfully created ${result.createdCount} transactions`
+        );
+        router.refresh();
+      } catch (error) {
+        toast.error("Failed to created transactions");
+        console.error("Bulk create error:", error);
+      }
+    });
+  };
+
   if (!data) {
     return (
       <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
@@ -84,7 +103,7 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
       <ImportCard
         data={importResult.data}
         onCancel={onCancel}
-        onSubmit={onUpload}
+        onSubmit={onSubmitImport}
       />
     );
   }
