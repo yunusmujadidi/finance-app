@@ -124,31 +124,35 @@ export const updateTransactions = async (values: Partial<Transaction>) => {
   }
 };
 
-export const bulkCreateTransactions = async (values: Transaction[]) => {
+export const bulkCreateTransactions = async (
+  values: Partial<Transaction>[]
+) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     throw new Error("Unauthorized");
   }
 
   try {
+    const formattedData = values.map((transaction) => ({
+      amount: transaction.amount
+        ? parseInt(transaction.amount.toString(), 10)
+        : 0,
+      payee: transaction.payee ?? "",
+      date: transaction.date
+        ? new Date(transaction.date).toISOString()
+        : new Date().toISOString(),
+      categoryId: transaction.categoryId ?? null,
+      accountId: transaction.accountId ?? "",
+      notes: transaction.notes ?? null,
+    }));
+
     const result = await prisma.transaction.createMany({
-      data: values.map((transaction) => ({
-        amount: transaction.amount,
-        payee: transaction.payee,
-        date: transaction.date,
-        categoryId: transaction.categoryId,
-        accountId: transaction.accountId,
-        notes: transaction.notes,
-        userId: currentUser.id,
-      })),
+      data: formattedData,
     });
 
-    return {
-      success: true,
-      message: `Successfully created ${result.count} transactions`,
-      createdCount: result.count,
-    };
+    return { success: true, createdCount: result.count, result };
   } catch (error) {
-    return { success: false, message: "Something went wrong: ", error };
+    console.error("Failed to create transactions", error);
+    return { success: false, error: "Something went wrong" };
   }
 };

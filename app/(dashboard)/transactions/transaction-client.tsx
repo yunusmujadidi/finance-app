@@ -18,6 +18,7 @@ import {
 } from "@/lib/actions/transaction-actions";
 import { UploadButton } from "./upload-button";
 import { ImportCard } from "./import-card";
+import { useSelectAccount } from "@/modules/account/hooks/use-select-account";
 
 enum VARIANT {
   LIST = "LIST",
@@ -35,6 +36,7 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
   const [isPending, startTransition] = useTransition();
   const { onOpen } = UseNewTransaction();
   const [importResult, setImportRResult] = useState(INITIAL_IMPORT_RESULT);
+  const [AccountDialog, confirm] = useSelectAccount();
 
   const router = useRouter();
 
@@ -49,7 +51,7 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
     setVariant(VARIANT.LIST);
   };
 
-  const handleBulkDelete = async (selectedIds: string[]) => {
+  const handleBulkDelete = (selectedIds: string[]) => {
     startTransition(async () => {
       try {
         const result = await deleteBulkTransactions(selectedIds as string[]);
@@ -66,16 +68,30 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
   };
 
   const onSubmitImport = async (values: Transaction[]) => {
+    const accountId = await confirm();
+
+    if (!accountId) {
+      return toast.error("Please select an account to continue");
+    }
+
+    const formattedValues = values.map((transaction) => ({
+      ...transaction,
+      accountId: accountId as string,
+    }));
+
     startTransition(async () => {
       try {
-        const result = await bulkCreateTransactions(values);
-
-        toast.success(
-          `Successfully created ${result.createdCount} transactions`
-        );
-        router.refresh();
+        const result = await bulkCreateTransactions(formattedValues);
+        if (result) {
+          toast.success(
+            `Successfully created ${result.createdCount} transactions`
+          );
+          console.log("result:", result);
+          setVariant(VARIANT.LIST);
+          router.refresh();
+        }
       } catch (error) {
-        toast.error("Failed to created transactions");
+        toast.error("Failed to create transactions");
         console.error("Bulk create error:", error);
       }
     });
@@ -100,11 +116,14 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
 
   if (variant === VARIANT.IMPORT) {
     return (
-      <ImportCard
-        data={importResult.data}
-        onCancel={onCancel}
-        onSubmit={onSubmitImport}
-      />
+      <>
+        <AccountDialog />
+        <ImportCard
+          data={importResult.data}
+          onCancel={onCancel}
+          onSubmit={onSubmitImport}
+        />
+      </>
     );
   }
 

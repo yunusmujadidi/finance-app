@@ -54,7 +54,15 @@ export const columns: ColumnDef<
   },
   {
     accessorKey: "category.name",
-    header: "Category",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Category
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => (
       <CategoryColumm
         transaction={row.original}
@@ -64,7 +72,15 @@ export const columns: ColumnDef<
   },
   {
     accessorKey: "payee",
-    header: "Recipient",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Recepient
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
   },
   {
     accessorKey: "amount",
@@ -94,7 +110,15 @@ export const columns: ColumnDef<
 
   {
     accessorKey: "account.name",
-    header: "Account",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Account
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => <AccountColumn account={row.original.account} />,
   },
   {
