@@ -1,18 +1,16 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { UseNewAccount } from "@/modules/account/hooks/use-new-account";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DataGrid } from "@/components/data-grid";
+import { getSummary } from "@/lib/actions/summary-actions";
 
-import { ChartContainer } from "@/components/ui/chart";
-import { Bar, BarChart } from "recharts";
-import { chartConfig } from "@/lib/utils";
-import { TransactionGraph } from "@/components/transaction-graph";
-import { CategoryGraph } from "@/components/category-graph";
-import { BarChartPage } from "@/components/bar-chart";
+const Dashboard = async () => {
+  const summary = await getSummary({
+    from: "2023-01-01",
+    to: "2025-01-01",
+  });
 
-const Dashboard = () => {
-  const { onOpen } = UseNewAccount();
-
-  return <div>Helo</div>;
+  return (
+    <div className="max-w-screen-2xl mx-auto w-full -mt-24 pb-10">
+      <DataGrid summary={summary} />
+    </div>
+  );
 };
 export default Dashboard;
