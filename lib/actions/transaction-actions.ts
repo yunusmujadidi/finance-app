@@ -35,7 +35,7 @@ export const createTransaction = async ({
 export const getTransactions = async () => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
-    throw new Error("Unauthorized");
+    return [];
   }
 
   try {

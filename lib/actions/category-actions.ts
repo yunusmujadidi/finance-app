@@ -7,7 +7,7 @@ import { getCurrentUser } from "./get-current-user";
 export const createCategory = async (values: { name: string }) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
-    throw new Error("Unauthorized");
+    return;
   }
 
   try {

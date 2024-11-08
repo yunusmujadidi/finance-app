@@ -120,13 +120,13 @@ export const TransactionForm = ({
       name: name,
     });
 
-    if (result.success) {
+    if (result?.success) {
       toast.success("Category created successfully");
     } else {
-      toast.error(result.error);
+      toast.error(result?.error);
     }
     router.refresh();
-    form.setValue("categoryId", result.result?.id as string);
+    form.setValue("categoryId", result?.result?.id as string);
     setOpen(false);
     setSearchValue("");
   };

@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { type ChartConfig } from "@/components/ui/chart";
+import { format, subDays } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -15,16 +16,16 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-export const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "#2563eb",
+export const chartConfig: ChartConfig = {
+  income: {
+    label: "Income",
+    color: "hsl(var(--chart-1))",
   },
-  mobile: {
-    label: "Mobile",
-    color: "#60a5fa",
+  expenses: {
+    label: "Expenses",
+    color: "hsl(var(--chart-2))",
   },
-} satisfies ChartConfig;
+};
 
 export const calculatePercentageChange = (
   current: number,
@@ -60,3 +61,41 @@ export const fillMissingDays = (
 
   return result;
 };
+
+type Period = {
+  from?: string | Date;
+  to?: string | Date;
+};
+
+export const formatDateRange = ({ period }: { period: Period }) => {
+  const defaultTo = new Date();
+  const defaultFrom = subDays(defaultTo, 30);
+
+  if (!period?.from) {
+    return `${format(defaultFrom, "LLL dd")} - ${format(
+      defaultTo,
+      "LLL dd y"
+    )}`;
+  }
+  if (period.to) {
+    return `${format(period.from, "LLL dd")} - ${format(
+      period.to,
+      "LLL dd y"
+    )}`;
+  }
+
+  return format(period.from, "LLL dd y");
+};
+
+export function formatPercentage(
+  value: number,
+  options: { addPrefix?: boolean } = { addPrefix: false }
+) {
+  const result = new Intl.NumberFormat("en-US", {
+    style: "percent",
+  }).format(value / 100);
+
+  if (options.addPrefix && value > 0) return `+${result}`;
+
+  return result;
+}

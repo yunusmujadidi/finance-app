@@ -7,7 +7,7 @@ import { getCurrentUser } from "./get-current-user";
 export const createAccount = async (values: { name: string }) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
-    throw new Error("Unauthorized");
+    return [];
   }
 
   try {
@@ -54,7 +54,7 @@ export const getAccount = async () => {
 export const bulkDeleteAccounts = async (ids: string[]) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
-    throw new Error("Unauthorized");
+    return [];
   }
   try {
     const result = await prisma.financialAccount.deleteMany({
