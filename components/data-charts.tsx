@@ -1,7 +1,8 @@
 "use client";
 
+import { CategoryChart } from "./category-chart";
 import { Chart } from "./chart";
-import { DonutChart } from "./pie-chart";
+import { PieChartVariant } from "./pie-chart";
 
 export interface Summary {
   remainingAmount: number;
@@ -22,7 +23,7 @@ export const DataCharts = ({ summary }: { summary: Summary }) => {
         <Chart data={summary} />
       </div>
       <div className="col-span-1 lg:col-span-3 xl:col-span-2">
-        <DonutChart />
+        <CategoryChart data={summary} />
       </div>
     </div>
   );

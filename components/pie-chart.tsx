@@ -1,129 +1,99 @@
-"use client";
-
-import * as React from "react";
-import { TrendingUp } from "lucide-react";
-import { Label, Pie, PieChart } from "recharts";
-
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  XAxis,
+} from "recharts";
 import {
   ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
-
-export const description = "A donut chart with text";
-
-const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 190, fill: "var(--color-other)" },
-];
+} from "./ui/chart";
+import { format } from "date-fns";
+import { formatPercentage } from "@/lib/utils";
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  chrome: {
-    label: "Chrome",
+  income: {
+    label: "Income",
     color: "hsl(var(--chart-1))",
   },
-  safari: {
-    label: "Safari",
+  expenses: {
+    label: "Expenses",
     color: "hsl(var(--chart-2))",
-  },
-  firefox: {
-    label: "Firefox",
-    color: "hsl(var(--chart-3))",
-  },
-  edge: {
-    label: "Edge",
-    color: "hsl(var(--chart-4))",
-  },
-  other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))",
   },
 } satisfies ChartConfig;
 
-export const DonutChart = () => {
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-  }, []);
+const Colors = ["#0062FF", "#12C6FF", "#FF647F", "#FF9354"];
 
+export const PieChartVariant = ({
+  data = [],
+}: {
+  data?: {
+    name: string;
+    value: number;
+  }[];
+}) => {
   return (
-    <Card className="flex flex-col h-full">
-      <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Donut with Text</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+    <ChartContainer config={chartConfig}>
+      <PieChart height={350}>
+        <Pie
+          data={data}
+          cx="50%"
+          cy="50%"
+          outerRadius={90}
+          innerRadius={60}
+          paddingAngle={2}
+          fill="#8884d8"
+          dataKey="value"
+          labelLine={false}
         >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              dataKey="visitors"
-              nameKey="browser"
-              innerRadius={60}
-              strokeWidth={5}
-            >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
-                        >
-                          {totalVisitors.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          Visitors
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
-            </Pie>
-          </PieChart>
-        </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
-    </Card>
+          {data.map((_entry, index) => (
+            <Cell key={`cell-${index}`} fill={Colors[index % Colors.length]} />
+          ))}
+        </Pie>
+        <ChartTooltip
+          cursor={false}
+          content={<ChartTooltipContent indicator="line" />}
+        />
+        <ChartLegend
+          layout="horizontal"
+          verticalAlign="bottom"
+          align="right"
+          iconType="circle"
+          content={({ payload }: any) => {
+            return (
+              <ul className="flex flex-col -mt-24 space-y-2">
+                {payload.map((entry: any, index: number) => (
+                  <li
+                    key={`item-${index}`}
+                    className="flex items-center space-x-2"
+                  >
+                    <span
+                      className="size-2 rounded-4"
+                      style={{ backgroundColor: entry.color }}
+                    />
+                    <div className="space-x-1">
+                      <span className="text-sm text-muted-foreground">
+                        {entry.value}
+                      </span>
+                      <span>
+                        {formatPercentage(entry.payload.percent * 100)}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            );
+          }}
+        />
+      </PieChart>
+    </ChartContainer>
   );
 };

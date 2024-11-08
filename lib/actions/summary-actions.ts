@@ -121,13 +121,32 @@ export const getSummary = async (params?: SummaryParams) => {
       },
     });
 
-    // Process top categories
-    const topCategories = categoryData.slice(0, 3).map((category) => ({
-      name: category.categoryId ?? "Unknown",
-      value: Math.abs(category._sum.amount ?? 0),
-    }));
+    // Fetch category names from the Categories model
+    const categoryIds = categoryData
+      .map((category) => category.categoryId)
+      .filter((id): id is string => id !== null);
+    const categories = await prisma.categories.findMany({
+      where: {
+        id: { in: categoryIds },
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
 
-    // Handle other categories
+    // Map category IDs to names
+    const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
+
+    const topCategories = categoryData
+      .filter((category) => category.categoryId !== null)
+      .slice(0, 3)
+      .map((category) => ({
+        name: categoryMap.get(category.categoryId as string) ?? "Unknown", // Get category name by ID
+        value: Math.abs(category._sum.amount ?? 0),
+      }));
+
+    // Process any remaining categories as "Other"
     const otherCategories = categoryData.slice(3);
     const otherSum = otherCategories.reduce(
       (sum, current) => sum + Math.abs(current._sum.amount ?? 0),
