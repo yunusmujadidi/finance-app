@@ -3,6 +3,7 @@ import { Navigation } from "@/components/navigation";
 import { UserMenu } from "./user-menu";
 import { getCurrentUser } from "@/lib/actions/get-current-user";
 import { NavbarText } from "./navbar-text";
+import { Filters } from "./filters";
 
 export const Navbar = async () => {
   const currentUser = await getCurrentUser();
@@ -17,6 +18,7 @@ export const Navbar = async () => {
           <UserMenu currentUser={currentUser} />
         </div>
         <NavbarText name={currentUser?.name ?? ""} />
+        <Filters />
       </div>
     </div>
   );
