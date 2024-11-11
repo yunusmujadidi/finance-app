@@ -9,7 +9,6 @@ import {
 } from "./ui/select";
 import { FinancialAccount } from "@prisma/client";
 import qs from "query-string";
-import queryString from "query-string";
 
 export const AccountFilter = ({
   data,
