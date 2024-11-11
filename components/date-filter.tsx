@@ -99,7 +99,7 @@ export const DateFilter = () => {
           </PopoverClose>
           <PopoverClose asChild>
             <Button
-              onClick={onReset}
+              onClick={() => pushToUrl(date)}
               disabled={!date?.from || !date?.to}
               className="w-full"
             >
