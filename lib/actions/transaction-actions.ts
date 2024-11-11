@@ -4,6 +4,8 @@ import { Transaction } from "@prisma/client";
 import { prisma } from "../prisma";
 import { getCurrentUser } from "./get-current-user";
 
+//TODO: add date and account filters
+
 export const createTransaction = async ({
   values,
 }: {

@@ -4,6 +4,8 @@ import { Categories } from "@prisma/client";
 import { prisma } from "../prisma";
 import { getCurrentUser } from "./get-current-user";
 
+//TODO: add date and account filters
+
 export const createCategory = async (values: { name: string }) => {
   const currentUser = await getCurrentUser();
   if (!currentUser) {

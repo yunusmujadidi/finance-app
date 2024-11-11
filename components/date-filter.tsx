@@ -55,6 +55,10 @@ export const DateFilter = () => {
     setDate(undefined);
     pushToUrl(undefined);
   };
+
+  if (pathname !== "/") {
+    return;
+  }
   return (
     <Popover>
       <PopoverTrigger asChild>
