@@ -19,6 +19,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 
+// TODO: add credentials login
+
 const SignInClient = () => {
   const [backgroundImage, setBackgroundImage] = useState("");
 
@@ -105,6 +107,7 @@ const SignInClient = () => {
                         type="email"
                         placeholder="m@example.com"
                         required
+                        disabled
                         className="w-full px-3 py-2 border border-gray-200 rounded-md dark:border-gray-700 dark:bg-gray-800"
                         {...field}
                       />
@@ -126,7 +129,7 @@ const SignInClient = () => {
                         Password
                       </FormLabel>
                       <Link
-                        href="/forgot-password"
+                        href="#"
                         className="text-xs text-blue-700 hover:text-blue-600 dark:text-blue-300 dark:hover:text-blue-200"
                       >
                         Forgot password?
@@ -134,6 +137,7 @@ const SignInClient = () => {
                     </div>
                     <FormControl>
                       <Input
+                        disabled
                         id="password"
                         type="password"
                         required
@@ -147,6 +151,7 @@ const SignInClient = () => {
               />
               <Button
                 type="submit"
+                disabled
                 className="w-full bg-blue-700 hover:bg-blue-800 text-white"
               >
                 Sign in
