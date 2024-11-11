@@ -41,7 +41,6 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
   const router = useRouter();
 
   const onUpload = (results: typeof INITIAL_IMPORT_RESULT) => {
-    console.log({ results });
     setImportRResult(results);
     setVariant(VARIANT.IMPORT);
   };
@@ -86,7 +85,6 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
           toast.success(
             `Successfully created ${result.createdCount} transactions`
           );
-          console.log("result:", result);
           setVariant(VARIANT.LIST);
           router.refresh();
         }

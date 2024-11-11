@@ -2,6 +2,8 @@ import TransactionClient from "./transaction-client";
 import { Transaction } from "@prisma/client";
 import { getTransactions } from "@/lib/actions/transaction-actions";
 
+export const dynamic = "force-dynamic";
+
 const AccountsPage = async () => {
   const data = await getTransactions();
 

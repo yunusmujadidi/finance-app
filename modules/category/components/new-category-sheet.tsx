@@ -23,12 +23,12 @@ export const NewCategorySheet = () => {
       name: values.name,
     });
     setLoading(false);
-    if (result.success) {
+    if (result?.success) {
       toast.success("category created successfully");
       router.refresh();
       onClose();
     } else {
-      toast.error(result.error);
+      toast.error(result?.error ?? "Failed to create category");
     }
   };
 

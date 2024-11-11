@@ -20,12 +20,20 @@ const AccountClient = ({ data }: { data: FinancialAccount[] }) => {
 
   const router = useRouter();
 
+  interface BulkDeleteResult {
+    success: boolean;
+    deletedCount?: number;
+    error?: string;
+  }
+
   const handleBulkDelete = async (selectedIds: string[]) => {
     startTransition(async () => {
       try {
         const result = await bulkDeleteAccounts(selectedIds);
 
-        toast.success(`Successfully deleted ${result.deletedCount} accounts`);
+        if ("deletedCount" in result) {
+          toast.success(`Successfully deleted ${result.deletedCount} accounts`);
+        }
         router.refresh();
       } catch (error) {
         toast.error("Failed to delete accounts");

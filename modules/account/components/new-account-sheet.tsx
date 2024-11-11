@@ -23,11 +23,11 @@ export const NewAccountSheet = () => {
       name: values.name,
     });
     setLoading(false);
-    if (result.success) {
+    if (!Array.isArray(result) && result.success) {
       toast.success("Account created successfully");
       router.refresh();
       onClose();
-    } else {
+    } else if (!Array.isArray(result)) {
       toast.error(result.error);
     }
   };

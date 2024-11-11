@@ -9,6 +9,8 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
 
+// TODO: add settings page
+
 const routes = [
   {
     href: "/",
@@ -27,10 +29,10 @@ const routes = [
     href: "/categories",
     label: "Categories",
   },
-  {
-    href: "/settings",
-    label: "Settings",
-  },
+  // {
+  //   href: "/settings",
+  //   label: "Settings",
+  // },
 ];
 export const Navigation = () => {
   const [isOpen, SetIsOpen] = useState(false);
