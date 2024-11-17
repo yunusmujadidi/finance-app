@@ -42,6 +42,11 @@ export const getTransactions = async () => {
 
   try {
     const result = await prisma.transaction.findMany({
+      where: {
+        account: {
+          userId: currentUser.id,
+        },
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -53,7 +58,8 @@ export const getTransactions = async () => {
 
     return result;
   } catch (error) {
-    return console.error("Something went wrong:", error as string);
+    console.error("Something went wrong:", error);
+    return [];
   }
 };
 

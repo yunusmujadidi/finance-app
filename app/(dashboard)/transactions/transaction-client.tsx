@@ -34,19 +34,19 @@ const INITIAL_IMPORT_RESULT = {
 const TransactionClient = ({ data }: { data: Transaction[] }) => {
   const [variant, setVariant] = useState<VARIANT>(VARIANT.LIST);
   const [isPending, startTransition] = useTransition();
-  const { onOpen } = UseNewTransaction();
-  const [importResult, setImportRResult] = useState(INITIAL_IMPORT_RESULT);
+  const [importResult, setImportResult] = useState(INITIAL_IMPORT_RESULT);
   const [AccountDialog, confirm] = useSelectAccount();
 
+  const { onOpen } = UseNewTransaction();
   const router = useRouter();
 
   const onUpload = (results: typeof INITIAL_IMPORT_RESULT) => {
-    setImportRResult(results);
+    setImportResult(results);
     setVariant(VARIANT.IMPORT);
   };
 
   const onCancel = () => {
-    setImportRResult(INITIAL_IMPORT_RESULT);
+    setImportResult(INITIAL_IMPORT_RESULT);
     setVariant(VARIANT.LIST);
   };
 
@@ -95,7 +95,7 @@ const TransactionClient = ({ data }: { data: Transaction[] }) => {
     });
   };
 
-  if (!data) {
+  if (isPending) {
     return (
       <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
         <Card className="border-none drop-shadow-sm">
