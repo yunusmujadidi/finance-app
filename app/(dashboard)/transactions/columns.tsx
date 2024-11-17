@@ -5,10 +5,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { ActionsTable } from "./table-actions";
-import { formatDate } from "@/lib/format-date";
+import { formatDate } from "@/lib/utils";
 import { Transaction } from "@prisma/client";
 import { AccountColumn } from "./account-column";
-import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { CategoryColumm } from "./category-column";
 
