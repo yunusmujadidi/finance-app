@@ -35,7 +35,7 @@ export const createTransaction = async ({
         notes: values.notes,
       },
     });
-    revalidatePath("/");
+    revalidatePath("/transactions");
     return result;
   } catch (error) {
     throw new Error(error as string);
@@ -88,7 +88,7 @@ export const deleteTransaction = async ({ id }: { id: string }) => {
         id: id as string,
       },
     });
-    revalidatePath("/");
+    revalidatePath("/transactions");
     return { success: true };
   } catch (error) {
     return { success: false, message: "Failed to delete transaction" };
@@ -136,7 +136,7 @@ export const updateTransactions = async (values: Partial<Transaction>) => {
         notes: values.notes,
       },
     });
-    revalidatePath("/");
+    revalidatePath("/transactions");
     return {
       success: true,
       message: "Success updated the transaction",

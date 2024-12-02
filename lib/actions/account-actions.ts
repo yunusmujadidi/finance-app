@@ -19,7 +19,7 @@ export const createAccount = async (values: { name: string }) => {
         userId: currentUser.id,
       },
     });
-    revalidatePath("/");
+    revalidatePath("/accounts");
     return { success: true, result };
   } catch (error) {
     console.error("Failed to create account:", error);
@@ -72,7 +72,7 @@ export const bulkDeleteAccounts = async (ids: string[]) => {
         userId: currentUser.id,
       },
     });
-    revalidatePath("/");
+    revalidatePath("/accounts");
     return { success: true, deletedCount: result.count };
   } catch (error) {
     console.error("Failed to delete accounts:", error);
@@ -96,8 +96,7 @@ export const updateAccount = async (values: Partial<FinancialAccount>) => {
         name: values.name,
       },
     });
-    revalidatePath("/");
-    revalidatePath(`/accounts/${values.id}`);
+    revalidatePath("/accounts");
     return { success: true, updatedData: result.name };
   } catch (error) {
     console.error("Failed to update account", error);
@@ -118,7 +117,7 @@ export const deleteAccount = async ({ id }: { id: string }) => {
         userId: currentUser.id,
       },
     });
-    revalidatePath("/");
+    revalidatePath("/accounts");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete account", error);

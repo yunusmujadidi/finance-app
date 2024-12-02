@@ -21,7 +21,7 @@ export const createCategory = async (values: { name: string }) => {
         userId: currentUser.id,
       },
     });
-    revalidatePath("/");
+    revalidatePath("/categories");
     return { success: true, result };
   } catch (error) {
     console.error("Failed to create category:", error);
@@ -74,7 +74,7 @@ export const bulkDeleteCategories = async (ids: string[]) => {
         userId: currentUser.id,
       },
     });
-    revalidatePath("/");
+    revalidatePath("/categories");
     return { success: true, deletedCount: result.count };
   } catch (error) {
     console.error("Failed to delete categories:", error);
@@ -98,7 +98,7 @@ export const updateCategory = async (values: Partial<Categories>) => {
         name: values.name,
       },
     });
-    revalidatePath("/");
+    revalidatePath("/categories");
     return { success: true, updatedData: result.name };
   } catch (error) {
     console.error("Failed to update category", error);
@@ -119,7 +119,7 @@ export const deleteCategory = async ({ id }: { id: string }) => {
         userId: currentUser.id,
       },
     });
-    revalidatePath("/");
+    revalidatePath("/categories");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete category", error);
