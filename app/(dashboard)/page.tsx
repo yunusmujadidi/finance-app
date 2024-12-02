@@ -2,6 +2,7 @@ import { DataCharts, Summary } from "@/components/data-charts";
 import { DataGrid } from "@/components/data-grid";
 import { getSummary } from "@/lib/actions/summary-actions";
 import { Suspense } from "react";
+export const dynamic = "force-dynamic";
 
 interface DashboardProps {
   searchParams: {

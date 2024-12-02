@@ -16,7 +16,7 @@ export const Navbar = async () => {
             <Logo />
             <Navigation />
           </div>
-          <UserMenu currentUser={currentUser} />
+          <UserMenu currentUser={currentUser || undefined} />
         </div>
         <NavbarText name={currentUser?.name ?? ""} />
         <Filters />
