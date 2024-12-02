@@ -3,6 +3,8 @@
 import { Transaction } from "@prisma/client";
 import { prisma } from "../prisma";
 import { getCurrentUser } from "./get-current-user";
+import { unstable_cache } from "next/cache";
+import { revalidatePath } from "next/cache";
 
 //TODO: add date and account filters
 // TODO: cache this transactions idk why it doesnt work :(
@@ -33,7 +35,7 @@ export const createTransaction = async ({
         notes: values.notes,
       },
     });
-
+    revalidatePath("/");
     return result;
   } catch (error) {
     throw new Error(error as string);
@@ -46,27 +48,33 @@ export const getTransactions = async () => {
     return [];
   }
 
-  try {
-    const result = await prisma.transaction.findMany({
-      where: {
-        account: {
-          userId: currentUser.id,
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      include: {
-        account: true,
-        category: true,
-      },
-    });
+  return unstable_cache(
+    async () => {
+      try {
+        const result = await prisma.transaction.findMany({
+          where: {
+            account: {
+              userId: currentUser.id,
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          include: {
+            account: true,
+            category: true,
+          },
+        });
 
-    return result;
-  } catch (error) {
-    console.error("Something went wrong:", error);
-    return [];
-  }
+        return result;
+      } catch (error) {
+        console.error("Something went wrong:", error);
+        return [];
+      }
+    },
+    ["transactions-list"],
+    { tags: ["transactions"], revalidate: 3600 }
+  )();
 };
 
 export const deleteTransaction = async ({ id }: { id: string }) => {
@@ -80,6 +88,7 @@ export const deleteTransaction = async ({ id }: { id: string }) => {
         id: id as string,
       },
     });
+    revalidatePath("/");
     return { success: true };
   } catch (error) {
     return { success: false, message: "Failed to delete transaction" };
@@ -127,7 +136,7 @@ export const updateTransactions = async (values: Partial<Transaction>) => {
         notes: values.notes,
       },
     });
-
+    revalidatePath("/");
     return {
       success: true,
       message: "Success updated the transaction",
