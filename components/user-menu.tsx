@@ -14,7 +14,7 @@ import { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-export const UserMenu = ({ currentUser }: { currentUser: User | null }) => {
+export const UserMenu = ({ currentUser }: { currentUser?: User }) => {
   const router = useRouter();
 
   return (

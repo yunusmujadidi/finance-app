@@ -3,8 +3,8 @@
 import { FinancialAccount } from "@prisma/client";
 import { prisma } from "../prisma";
 import { getCurrentUser } from "./get-current-user";
-
-//TODO: add date and account filters
+import { unstable_cache } from "next/cache";
+import { revalidatePath } from "next/cache";
 
 export const createAccount = async (values: { name: string }) => {
   const currentUser = await getCurrentUser();
@@ -19,6 +19,7 @@ export const createAccount = async (values: { name: string }) => {
         userId: currentUser.id,
       },
     });
+    revalidatePath("/accounts");
     return { success: true, result };
   } catch (error) {
     console.error("Failed to create account:", error);
@@ -32,25 +33,31 @@ export const getAccount = async () => {
     return [];
   }
 
-  try {
-    const result = await prisma.financialAccount.findMany({
-      where: {
-        userId: currentUser.id,
-      },
-      select: {
-        id: true,
-        name: true,
-        createdAt: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-    return result;
-  } catch (error) {
-    console.error("Failed to fetch accounts:", error);
-    throw new Error("Failed to fetch accounts");
-  }
+  return unstable_cache(
+    async () => {
+      try {
+        const result = await prisma.financialAccount.findMany({
+          where: {
+            userId: currentUser.id,
+          },
+          select: {
+            id: true,
+            name: true,
+            createdAt: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+        return result;
+      } catch (error) {
+        console.error("Failed to fetch accounts:", error);
+        throw new Error("Failed to fetch accounts");
+      }
+    },
+    ["accounts-list"],
+    { tags: ["accounts"], revalidate: 3600 }
+  )();
 };
 
 export const bulkDeleteAccounts = async (ids: string[]) => {
@@ -65,7 +72,7 @@ export const bulkDeleteAccounts = async (ids: string[]) => {
         userId: currentUser.id,
       },
     });
-
+    revalidatePath("/accounts");
     return { success: true, deletedCount: result.count };
   } catch (error) {
     console.error("Failed to delete accounts:", error);
@@ -89,7 +96,8 @@ export const updateAccount = async (values: Partial<FinancialAccount>) => {
         name: values.name,
       },
     });
-
+    revalidatePath("/accounts");
+    revalidatePath(`/accounts/${values.id}`);
     return { success: true, updatedData: result.name };
   } catch (error) {
     console.error("Failed to update account", error);
@@ -110,6 +118,7 @@ export const deleteAccount = async ({ id }: { id: string }) => {
         userId: currentUser.id,
       },
     });
+    revalidatePath("/accounts");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete account", error);
@@ -122,22 +131,27 @@ export const getAccountById = async ({ id }: { id: string }) => {
   if (!currentUser) {
     throw new Error("Unauthorized");
   }
+  return unstable_cache(
+    async () => {
+      try {
+        const result = await prisma.financialAccount.findUnique({
+          where: {
+            id: id,
+            userId: currentUser.id,
+          },
+        });
 
-  try {
-    const result = await prisma.financialAccount.findUnique({
-      where: {
-        id: id,
-        userId: currentUser.id,
-      },
-    });
+        if (!result) {
+          return { success: false, error: "Account not found" };
+        }
 
-    if (!result) {
-      return { success: false, error: "Account not found" };
-    }
-
-    return result;
-  } catch (error) {
-    console.error("Failed to fetch account", error);
-    return { success: false, error: "Failed to fetch account" };
-  }
+        return result;
+      } catch (error) {
+        console.error("Failed to fetch account", error);
+        return { success: false, error: "Failed to fetch account" };
+      }
+    },
+    [`account-${id}`],
+    { tags: ["accounts"], revalidate: 3600 }
+  )();
 };

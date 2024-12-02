@@ -1,5 +1,7 @@
 "use server";
 
+import { unstable_cache } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { Categories } from "@prisma/client";
 import { prisma } from "../prisma";
 import { getCurrentUser } from "./get-current-user";
@@ -19,6 +21,7 @@ export const createCategory = async (values: { name: string }) => {
         userId: currentUser.id,
       },
     });
+    revalidatePath("/categories");
     return { success: true, result };
   } catch (error) {
     console.error("Failed to create category:", error);
@@ -32,25 +35,27 @@ export const getCategories = async () => {
     return [];
   }
 
-  try {
-    const result = await prisma.categories.findMany({
-      where: {
-        userId: currentUser.id,
-      },
-      select: {
-        id: true,
-        name: true,
-        createdAt: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-    return result;
-  } catch (error) {
-    console.error("Failed to fetch categories:", error);
-    throw new Error("Failed to fetch categories");
-  }
+  return unstable_cache(async () => {
+    try {
+      const result = await prisma.categories.findMany({
+        where: {
+          userId: currentUser.id,
+        },
+        select: {
+          id: true,
+          name: true,
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      return result;
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+      throw new Error("Failed to fetch categories");
+    }
+  }, ["categories"])();
 };
 
 export const bulkDeleteCategories = async (ids: string[]) => {
@@ -65,7 +70,7 @@ export const bulkDeleteCategories = async (ids: string[]) => {
         userId: currentUser.id,
       },
     });
-
+    revalidatePath("/categories");
     return { success: true, deletedCount: result.count };
   } catch (error) {
     console.error("Failed to delete categories:", error);
@@ -89,7 +94,7 @@ export const updateCategory = async (values: Partial<Categories>) => {
         name: values.name,
       },
     });
-
+    revalidatePath("/categories");
     return { success: true, updatedData: result.name };
   } catch (error) {
     console.error("Failed to update category", error);
@@ -110,6 +115,7 @@ export const deleteCategory = async ({ id }: { id: string }) => {
         userId: currentUser.id,
       },
     });
+    revalidatePath("/categories");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete category", error);

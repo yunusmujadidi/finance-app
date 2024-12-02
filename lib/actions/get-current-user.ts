@@ -1,23 +1,18 @@
 "use server";
 
 import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { User } from "@prisma/client";
+import { cache } from "react";
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async () => {
   try {
     const session = await auth();
     if (!session?.user?.email) {
       return null;
     }
-
-    const user = await prisma.user.findUnique({
-      where: {
-        email: session.user.email,
-      },
-    });
-    return user;
+    return session.user as User;
   } catch (error) {
     console.error("Error getting current user:", error);
     return null;
   }
-}
+});

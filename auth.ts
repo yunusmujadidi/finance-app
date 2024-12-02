@@ -48,43 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google,
     GitHub,
   ],
-  session: {
-    strategy: "jwt",
-  },
-  callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      if (account?.provider === "google" || account?.provider === "github") {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: user.email as string },
-        });
-        if (existingUser) {
-          // Check if this OAuth account is already linked to the user
-          const linkedAccount = await prisma.account.findFirst({
-            where: {
-              userId: existingUser.id,
-              provider: account?.provider as string,
-            },
-          });
-          if (!linkedAccount) {
-            // Link the new OAuth account to the existing user
-            await prisma.account.create({
-              data: {
-                userId: existingUser.id,
-                type: account?.type as string,
-                provider: account?.provider as string,
-                providerAccountId: account?.providerAccountId as string,
-                access_token: account?.access_token,
-                token_type: account?.token_type,
-                scope: account?.scope,
-              },
-            });
-          }
-          return true; // Allow sign in
-        }
-      }
-      return true; // Allow sign in for other cases
-    },
-  },
+
   pages: {
     signIn: "/auth/signin",
   },

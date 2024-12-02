@@ -5,6 +5,7 @@ import { prisma } from "../prisma";
 import { getCurrentUser } from "./get-current-user";
 
 //TODO: add date and account filters
+// TODO: cache this transactions idk why it doesnt work :(
 
 export const createTransaction = async ({
   values,
@@ -15,7 +16,12 @@ export const createTransaction = async ({
   if (!currentUser) {
     throw new Error("Unauthorized");
   }
-
+  const amount = values.amount ?? 1;
+  if (amount < -2147483648 || amount > 2147483647) {
+    throw new Error(
+      "Amount value is out of range for a 32-bit signed integer."
+    );
+  }
   try {
     const result = await prisma.transaction.create({
       data: {
