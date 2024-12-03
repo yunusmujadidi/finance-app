@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { DataCharts, Summary } from "@/components/data-charts";
 import { DataGrid } from "@/components/data-grid";
 import {
@@ -9,8 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getSummary } from "@/lib/actions/summary-actions";
-import { Icon } from "lucide-react";
-import { Suspense } from "react";
 export const dynamic = "force-dynamic";
 
 interface DashboardProps {

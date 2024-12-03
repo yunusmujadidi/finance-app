@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
+import Link from "next/link";
 
 // TODO: add settings page
 
@@ -61,14 +62,15 @@ export const Navigation = () => {
         <SheetContent side="left" className="px-2 ">
           <nav className="gap-y-2 pt-6">
             {routes.map((route) => (
-              <Button
-                key={route.href}
-                variant={route.href === pathname ? "secondary" : "ghost"}
-                onClick={() => onClick(route.href)}
-                className="w-full justify-start"
-              >
-                {route.label}
-              </Button>
+              <Link key={route.href} href={route.href}>
+                <Button
+                  asChild
+                  variant={route.href === pathname ? "secondary" : "ghost"}
+                  className="w-full justify-start"
+                >
+                  {route.label}
+                </Button>
+              </Link>
             ))}
           </nav>
         </SheetContent>

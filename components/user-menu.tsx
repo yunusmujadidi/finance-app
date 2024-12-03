@@ -9,10 +9,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu";
-import { signIn, signOut } from "next-auth/react";
 import { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { signOut } from "next-auth/react";
+import { handleCache } from "@/lib/actions/handle-cache";
 
 export const UserMenu = ({ currentUser }: { currentUser?: User }) => {
   const router = useRouter();
@@ -39,7 +40,12 @@ export const UserMenu = ({ currentUser }: { currentUser?: User }) => {
         <DropdownMenuContent align="end" className="w-40 mx-5">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => signOut()}>
+          <DropdownMenuItem
+            onClick={() => {
+              handleCache();
+              signOut({ callbackUrl: "/" });
+            }}
+          >
             <LogOut className="mr-2 size-4" />
             <span>Log Out</span>
           </DropdownMenuItem>
@@ -52,10 +58,10 @@ export const UserMenu = ({ currentUser }: { currentUser?: User }) => {
             <LogIn className="mr-2 size-4" />
             <span>Log In</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push("/sign-up")}>
+          {/* <DropdownMenuItem onClick={() => router.push("/sign-up")}>
             <UserPlus className="mr-2 size-4" />
             <span>Sign Up</span>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       )}
     </DropdownMenu>

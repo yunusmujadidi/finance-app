@@ -18,11 +18,16 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
+import { revalidatePath } from "next/cache";
+import { useRouter } from "next/navigation";
+import { handleCache } from "@/lib/actions/handle-cache";
 
 // TODO: add credentials login
 
 const SignInClient = () => {
   const [backgroundImage, setBackgroundImage] = useState("");
+
+  const router = useRouter();
 
   useEffect(() => {
     setBackgroundImage(
@@ -59,7 +64,11 @@ const SignInClient = () => {
             </p>
           </div>
           <Button
-            onClick={() => signIn("google", { callbackUrl: "/" })}
+            onClick={() => {
+              handleCache();
+              router.refresh();
+              signIn("google", { callbackUrl: "/" });
+            }}
             variant="outline"
             className="w-full border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
           >
