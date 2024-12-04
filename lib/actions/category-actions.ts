@@ -22,6 +22,7 @@ export const createCategory = async (values: { name: string }) => {
       },
     });
     revalidatePath("/categories");
+    revalidatePath("/transactions");
     return { success: true, result };
   } catch (error) {
     console.error("Failed to create category:", error);
@@ -99,6 +100,7 @@ export const updateCategory = async (values: Partial<Categories>) => {
       },
     });
     revalidatePath("/categories");
+    revalidatePath("/transactions");
     return { success: true, updatedData: result.name };
   } catch (error) {
     console.error("Failed to update category", error);
@@ -120,6 +122,7 @@ export const deleteCategory = async ({ id }: { id: string }) => {
       },
     });
     revalidatePath("/categories");
+    revalidatePath("/transactions");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete category", error);
