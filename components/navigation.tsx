@@ -36,7 +36,7 @@ const routes = [
   // },
 ];
 export const Navigation = () => {
-  const [isOpen, SetIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -44,12 +44,12 @@ export const Navigation = () => {
 
   const onClick = (href: string) => {
     router.push(href);
-    SetIsOpen(false);
+    setIsOpen(false);
   };
 
   if (isMobile) {
     return (
-      <Sheet open={isOpen} onOpenChange={SetIsOpen}>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger>
           <Button
             variant="outline"
@@ -60,17 +60,16 @@ export const Navigation = () => {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="px-2 ">
-          <nav className="gap-y-2 pt-6">
+          <nav className="flex flex-col gap-y-2 pt-6">
             {routes.map((route) => (
-              <Link key={route.href} href={route.href}>
-                <Button
-                  asChild
-                  variant={route.href === pathname ? "secondary" : "ghost"}
-                  className="w-full justify-start"
-                >
-                  {route.label}
-                </Button>
-              </Link>
+              <Button
+                key={route.href}
+                variant={route.href === pathname ? "secondary" : "ghost"}
+                onClick={() => onClick(route.href)}
+                className="w-full justify-start"
+              >
+                {route.label}
+              </Button>
             ))}
           </nav>
         </SheetContent>

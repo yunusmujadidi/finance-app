@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <SheetProvider />
         <Toaster />
-        <main>{children}</main>
+        <main className="min-w-2xl">{children}</main>
       </body>
     </html>
   );

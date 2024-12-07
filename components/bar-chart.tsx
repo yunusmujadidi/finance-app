@@ -33,7 +33,7 @@ export const BarChartVariant = ({ chartData }: { chartData: chartData[] }) => {
           axisLine={false}
           tickLine={false}
           dataKey="date"
-          tickFormatter={(value) => format(value, "dd MMM")}
+          // tickFormatter={(value) => format(value, "dd MMM")}
           style={{ fontSize: "12px" }}
           tickMargin={16}
         />

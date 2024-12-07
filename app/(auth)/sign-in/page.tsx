@@ -1,6 +1,6 @@
 import SignInClient from "@/app/(auth)/sign-in/signinclient";
 import { getCurrentUser } from "@/lib/actions/get-current-user";
-import SignOutButton from "./sign-out";
+import { redirect } from "next/navigation";
 export const dynamic = "force-dynamic";
 const SignInPage = async () => {
   const user = await getCurrentUser();
@@ -9,12 +9,7 @@ const SignInPage = async () => {
     return <SignInClient />;
   }
 
-  return (
-    <div>
-      <SignOutButton />
-      {user.id}
-    </div>
-  );
+  redirect("/");
 };
 
 export default SignInPage;
